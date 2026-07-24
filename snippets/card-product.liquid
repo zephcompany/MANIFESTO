@@ -1,30 +1,6 @@
-{%- comment -%}
-  ============================================================
-  card-product — card de produto reutilizável
-  ============================================================
-
-  O QUE FAZ:
-  Renderiza o card de um produto: imagem (com troca de imagem no hover se
-  ativado nas settings), badge de promoção/esgotado, vendor opcional,
-  título e preço (via snippet 'price').
-
-  COMO USAR:
-  {% render 'card-product', card_product: product %}
-  Dentro de um loop de coleção, por exemplo.
-
-  PARÂMETROS:
-  - card_product: objeto product a ser exibido no card.
-
-  OBSERVAÇÕES:
-  O aspect ratio da imagem vem de settings.card_image_ratio
-  ('portrait', 'square' ou 'adapt'). A segunda imagem no hover depende de
-  settings.card_show_second_image; o vendor depende de settings.card_show_vendor.
-{%- endcomment -%}
 {%- liquid
-  assign ratio = 1
+  assign ratio = 0.8
   case settings.card_image_ratio
-    when 'portrait'
-      assign ratio = 0.75
     when 'square'
       assign ratio = 1
     when 'adapt'
@@ -32,50 +8,139 @@
         assign ratio = card_product.featured_media.aspect_ratio
       endif
   endcase
+
+  assign pix_discount = pix_discount | default: 5
+  assign selected_variant = card_product.selected_or_first_available_variant
+  assign current_price = card_product.price_min
+  assign compare_price = card_product.compare_at_price_max
+  assign on_sale = false
+  assign discount_percent = 0
+
+  if compare_price > current_price
+    assign on_sale = true
+    assign discount_value = compare_price | minus: current_price
+    assign discount_percent = discount_value | times: 100.0 | divided_by: compare_price | round
+  endif
+
+  assign pix_multiplier = 100 | minus: pix_discount
+  assign pix_price = current_price | times: pix_multiplier | divided_by: 100
 -%}
-<div class="card-product">
-  <a href="{{ card_product.url }}" class="card-product__link">
-    <div class="card-product__media" style="padding-bottom: {{ 1 | divided_by: ratio | times: 100 }}%;">
+
+<article class="manifesto-product-card">
+  <a href="{{ card_product.url }}" class="manifesto-product-card__media-link" aria-label="{{ card_product.title | escape }}">
+    <div class="manifesto-product-card__media" style="--card-ratio: {{ ratio }};">
       {%- if card_product.featured_media -%}
         {{
           card_product.featured_media
-          | image_url: width: 720
+          | image_url: width: 900
           | image_tag:
             loading: 'lazy',
-            class: 'card-product__image card-product__image--primary',
-            widths: '180, 360, 540, 720',
-            sizes: '(min-width: 1000px) 25vw, 50vw',
+            class: 'manifesto-product-card__image manifesto-product-card__image--primary',
+            widths: '220, 360, 520, 720, 900',
+            sizes: '(min-width: 1100px) 25vw, (min-width: 650px) 50vw, 85vw',
             alt: card_product.featured_media.alt | default: card_product.title | escape
         }}
+
         {%- if settings.card_show_second_image and card_product.media[1] -%}
           {{
             card_product.media[1]
-            | image_url: width: 720
+            | image_url: width: 900
             | image_tag:
               loading: 'lazy',
-              class: 'card-product__image card-product__image--secondary',
-              widths: '180, 360, 540, 720',
-              sizes: '(min-width: 1000px) 25vw, 50vw',
+              class: 'manifesto-product-card__image manifesto-product-card__image--secondary',
+              widths: '220, 360, 520, 720, 900',
+              sizes: '(min-width: 1100px) 25vw, (min-width: 650px) 50vw, 85vw',
               alt: card_product.media[1].alt | default: card_product.title | escape
           }}
         {%- endif -%}
       {%- else -%}
-        {{ 'product-1' | placeholder_svg_tag: 'card-product__image placeholder-svg' }}
+        {{ 'product-1' | placeholder_svg_tag: 'manifesto-product-card__image placeholder-svg' }}
       {%- endif -%}
 
-      {%- if card_product.compare_at_price > card_product.price and card_product.available -%}
-        <span class="card-product__badge">{{ 'products.product.on_sale' | t }}</span>
+      {%- if on_sale -%}
+        <span class="manifesto-product-card__badge">-{{ discount_percent }}%</span>
       {%- elsif card_product.available == false -%}
-        <span class="card-product__badge card-product__badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+        <span class="manifesto-product-card__badge">ESGOTADO</span>
       {%- endif -%}
-    </div>
 
-    <div class="card-product__info">
-      {%- if settings.card_show_vendor and card_product.vendor != blank -%}
-        <span class="card-product__vendor">{{ card_product.vendor }}</span>
-      {%- endif -%}
-      <h3 class="card-product__title">{{ card_product.title | escape }}</h3>
-      {% render 'price', product: card_product, use_variant: false, show_compare: true, price_class: 'price--card' %}
+      <span class="manifesto-product-card__hover-label">VER PRODUTO</span>
     </div>
   </a>
-</div>
+
+  <div class="manifesto-product-card__content">
+    <a href="{{ card_product.url }}" class="manifesto-product-card__title-link">
+      <h3 class="manifesto-product-card__title">{{ card_product.title | escape }}</h3>
+    </a>
+
+    <div class="manifesto-product-card__price-row">
+      {%- if on_sale -%}
+        <s class="manifesto-product-card__compare">{{ compare_price | money }}</s>
+      {%- endif -%}
+      <span class="manifesto-product-card__price">{{ current_price | money }}</span>
+    </div>
+
+    {%- if pix_discount > 0 -%}
+      <p class="manifesto-product-card__pix">
+        <strong>{{ pix_price | money }}</strong> no Pix
+        <span>{{ pix_discount }}% OFF</span>
+      </p>
+    {%- endif -%}
+
+    {%- assign color_option_found = false -%}
+    {%- for option in card_product.options_with_values -%}
+      {%- assign option_name = option.name | downcase -%}
+      {%- if option_name contains 'cor' or option_name contains 'color' -%}
+        {%- assign color_option_found = true -%}
+        <div class="manifesto-product-card__swatches" aria-label="Cores disponíveis">
+          {%- for value in option.values limit: 6 -%}
+            {%- assign color_value = value | downcase | strip -%}
+            {%- capture swatch_color -%}
+              {%- case color_value -%}
+                {%- when 'preto' -%}#111111
+                {%- when 'branco' -%}#ffffff
+                {%- when 'off white' -%}#f3f0e8
+                {%- when 'off-white' -%}#f3f0e8
+                {%- when 'cinza' -%}#9a9a9a
+                {%- when 'cinza chumbo' -%}#444444
+                {%- when 'bege' -%}#cbbb9f
+                {%- when 'marrom' -%}#65483d
+                {%- when 'azul' -%}#1f4d8c
+                {%- when 'azul marinho' -%}#17233f
+                {%- when 'verde' -%}#3f5d45
+                {%- when 'vermelho' -%}#a52a2a
+                {%- when 'black' -%}#111111
+                {%- when 'white' -%}#ffffff
+                {%- when 'gray' -%}#9a9a9a
+                {%- when 'grey' -%}#9a9a9a
+                {%- when 'navy' -%}#17233f
+                {%- when 'blue' -%}#1f4d8c
+                {%- when 'green' -%}#3f5d45
+                {%- when 'red' -%}#a52a2a
+                {%- when 'brown' -%}#65483d
+                {%- when 'beige' -%}#cbbb9f
+                {%- else -%}#d9d9d9
+              {%- endcase -%}
+            {%- endcapture -%}
+            <span
+              class="manifesto-product-card__swatch"
+              title="{{ value | escape }}"
+              style="--swatch: {{ swatch_color | strip }};"
+            ></span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- unless color_option_found -%}
+      <div class="manifesto-product-card__swatches manifesto-product-card__swatches--empty" aria-hidden="true"></div>
+    {%- endunless -%}
+
+    <a
+      href="{{ card_product.url }}"
+      class="manifesto-product-card__button {% unless card_product.available %}manifesto-product-card__button--disabled{% endunless %}"
+      {% unless card_product.available %}aria-disabled="true"{% endunless %}
+    >
+      {%- if card_product.available -%}COMPRAR{%- else -%}ESGOTADO{%- endif -%}
+    </a>
+  </div>
+</article>

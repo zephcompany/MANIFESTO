@@ -1,0 +1,162 @@
+<section class="manifesto-faq" data-section-id="{{ section.id }}">
+  <div class="manifesto-faq__inner page-width">
+    <header class="manifesto-faq__header">
+      <span class="manifesto-faq__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+      <h2 class="manifesto-faq__heading">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.text != blank -%}
+        <p class="manifesto-faq__intro">{{ section.settings.text | escape }}</p>
+      {%- endif -%}
+    </header>
+
+    <div class="manifesto-faq__items">
+      {%- for block in section.blocks -%}
+        <details class="manifesto-faq__item" {{ block.shopify_attributes }} {% if forloop.first %}open{% endif %}>
+          <summary class="manifesto-faq__question">
+            <span>{{ block.settings.question | escape }}</span>
+            <span class="manifesto-faq__plus" aria-hidden="true"></span>
+          </summary>
+          <div class="manifesto-faq__answer rte">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .manifesto-faq {
+    padding: clamp(75px, 9vw, 135px) 0;
+    color: #000;
+    background: #fff;
+  }
+
+  .manifesto-faq__inner {
+    display: grid;
+    grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(55px, 10vw, 150px);
+    align-items: start;
+  }
+
+  .manifesto-faq__header { position: sticky; top: 35px; }
+
+  .manifesto-faq__eyebrow {
+    display: block;
+    margin-bottom: 19px;
+    color: #777;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .manifesto-faq__heading {
+    margin: 0 0 20px;
+    color: #000;
+    font-size: clamp(42px, 7vw, 92px);
+    font-weight: 800;
+    line-height: 0.82;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
+  }
+
+  .manifesto-faq__intro {
+    max-width: 380px;
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .manifesto-faq__items { border-top: 1px solid #000; }
+  .manifesto-faq__item { border-bottom: 1px solid #000; }
+
+  .manifesto-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    min-height: 88px;
+    padding: 22px 2px;
+    color: #000;
+    list-style: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .manifesto-faq__question::-webkit-details-marker { display: none; }
+
+  .manifesto-faq__plus {
+    position: relative;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .manifesto-faq__plus::before,
+  .manifesto-faq__plus::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 1px;
+    background: #000;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s ease;
+  }
+
+  .manifesto-faq__plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .manifesto-faq__item[open] .manifesto-faq__plus::after { transform: translate(-50%, -50%) rotate(0); }
+
+  .manifesto-faq__answer {
+    max-width: 690px;
+    padding: 0 45px 27px 2px;
+    color: #5e5e5e;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  @media screen and (max-width: 850px) {
+    .manifesto-faq__inner { grid-template-columns: 1fr; gap: 48px; }
+    .manifesto-faq__header { position: static; }
+    .manifesto-faq__heading { font-size: 57px; }
+    .manifesto-faq__question { min-height: 76px; font-size: 12px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "FAQ Manifesto",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Texto pequeno", "default": "DÚVIDAS FREQUENTES" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "FAQ" },
+    { "type": "textarea", "id": "text", "label": "Introdução", "default": "Tudo o que você precisa saber antes de vestir sua próxima ideia." }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Pergunta",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Pergunta", "default": "Qual é o prazo de envio?" },
+        { "type": "richtext", "id": "answer", "label": "Resposta", "default": "<p>Após a confirmação do pagamento, seu pedido é preparado e enviado com código de rastreio.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Manifesto",
+      "blocks": [
+        { "type": "question", "settings": { "question": "Qual é o prazo de envio?", "answer": "<p>Após a confirmação do pagamento, seu pedido é preparado e enviado com código de rastreio.</p>" } },
+        { "type": "question", "settings": { "question": "Como escolher o tamanho certo?", "answer": "<p>Consulte a tabela de medidas disponível na página de cada produto e compare com uma camiseta que você já usa.</p>" } },
+        { "type": "question", "settings": { "question": "Posso trocar minha camiseta?", "answer": "<p>Sim. Entre em contato dentro do prazo informado em nossa política de trocas e vamos orientar todo o processo.</p>" } },
+        { "type": "question", "settings": { "question": "O pagamento é seguro?", "answer": "<p>Sim. O checkout da Shopify usa uma conexão protegida e os dados de pagamento são processados de forma segura.</p>" } },
+        { "type": "question", "settings": { "question": "Como rastrear meu pedido?", "answer": "<p>Assim que o pedido for despachado, você receberá o código de rastreio. Também pode consultar pela página Rastreie seu pedido.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

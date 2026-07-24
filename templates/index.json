@@ -2,18 +2,123 @@
   "sections": {
     "hero": {
       "type": "image-banner",
+      "settings": {
+        "height": "medium",
+        "link_label": "Ver coleção"
+      }
+    },
+    "benefits": {
+      "type": "manifesto-benefits",
       "blocks": {
-        "heading": { "type": "heading", "settings": { "heading": "Welcome to your store" } },
-        "text": { "type": "text", "settings": { "text": "<p>Add your headline and shop link here.</p>" } },
-        "button": { "type": "button", "settings": { "button_label": "Shop now" } }
+        "premium": {
+          "type": "benefit",
+          "settings": {
+            "icon": "cotton",
+            "title": "Algodão premium",
+            "text": "Malha encorpada, toque macio e caimento que dura."
+          }
+        },
+        "secure": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "title": "Compra segura",
+            "text": "Ambiente protegido e pagamento criptografado."
+          }
+        },
+        "exchange": {
+          "type": "benefit",
+          "settings": {
+            "icon": "exchange",
+            "title": "Troca facilitada",
+            "text": "Não amou? A gente resolve rápido, sem estresse."
+          }
+        },
+        "shipping": {
+          "type": "benefit",
+          "settings": {
+            "icon": "truck",
+            "title": "Envio para todo o Brasil",
+            "text": "Despachamos rápido, com código de rastreio."
+          }
+        }
       },
-      "block_order": ["heading", "text", "button"],
-      "settings": { "height": "medium", "text_alignment": "center" }
+      "block_order": ["premium", "secure", "exchange", "shipping"],
+      "settings": {}
     },
     "featured": {
       "type": "featured-collection",
-      "settings": { "heading": "Featured collection", "products_to_show": 4, "columns_desktop": 4 }
+      "settings": {
+        "heading": "MAIS VENDIDAS",
+        "subheading": "Confira as escolhas mais populares do momento.",
+        "collection": "all",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "pix_discount": 5,
+        "show_view_all": true
+      }
+    },
+    "social_proof": {
+      "type": "manifesto-social-proof",
+      "settings": {
+        "eyebrow": "QUEM VESTE, MANIFESTA",
+        "number": "+720",
+        "heading": "clientes satisfeitos",
+        "text": "Pessoas que escolheram vestir ideias grandes demais para ficar só na cabeça."
+      }
+    },
+    "marquee": {
+      "type": "manifesto-marquee",
+      "settings": {
+        "text": "VISTA O QUE VOCÊ PENSA"
+      }
+    },
+    "faq": {
+      "type": "manifesto-faq",
+      "blocks": {
+        "shipping": {
+          "type": "question",
+          "settings": {
+            "question": "Qual é o prazo de envio?",
+            "answer": "<p>Após a confirmação do pagamento, seu pedido é preparado e enviado com código de rastreio.</p>"
+          }
+        },
+        "size": {
+          "type": "question",
+          "settings": {
+            "question": "Como escolher o tamanho certo?",
+            "answer": "<p>Consulte a tabela de medidas disponível na página de cada produto e compare com uma camiseta que você já usa.</p>"
+          }
+        },
+        "exchange": {
+          "type": "question",
+          "settings": {
+            "question": "Posso trocar minha camiseta?",
+            "answer": "<p>Sim. Entre em contato dentro do prazo informado em nossa política de trocas e vamos orientar todo o processo.</p>"
+          }
+        },
+        "payment": {
+          "type": "question",
+          "settings": {
+            "question": "O pagamento é seguro?",
+            "answer": "<p>Sim. O checkout da Shopify usa uma conexão protegida e os dados de pagamento são processados de forma segura.</p>"
+          }
+        },
+        "tracking": {
+          "type": "question",
+          "settings": {
+            "question": "Como rastrear meu pedido?",
+            "answer": "<p>Assim que o pedido for despachado, você receberá o código de rastreio. Também pode consultar pela página Rastreie seu pedido.</p>"
+          }
+        }
+      },
+      "block_order": ["shipping", "size", "exchange", "payment", "tracking"],
+      "settings": {
+        "eyebrow": "DÚVIDAS FREQUENTES",
+        "heading": "FAQ",
+        "text": "Tudo o que você precisa saber antes de vestir sua próxima ideia."
+      }
     }
   },
-  "order": ["hero", "featured"]
+  "order": ["hero", "benefits", "featured", "social_proof", "marquee", "faq"]
 }

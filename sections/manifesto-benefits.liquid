@@ -1,0 +1,132 @@
+<section class="manifesto-benefits" data-section-id="{{ section.id }}">
+  <div class="manifesto-benefits__grid page-width">
+    {%- for block in section.blocks -%}
+      <article class="manifesto-benefits__item" {{ block.shopify_attributes }}>
+        <div class="manifesto-benefits__icon" aria-hidden="true">
+          {%- case block.settings.icon -%}
+            {%- when 'cotton' -%}
+              <svg viewBox="0 0 48 48" fill="none"><path d="M24 38V22m0 4c-5 0-9-4-9-9 0-4 3-7 7-7 1-4 5-7 9-7 5 0 9 4 9 9 0 6-5 11-11 11h-5Zm0 4c5 0 9-4 9-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 43h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            {%- when 'shield' -%}
+              <svg viewBox="0 0 48 48" fill="none"><path d="M24 4 39 10v11c0 10-6 18-15 23C15 39 9 31 9 21V10L24 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m17 24 5 5 10-11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {%- when 'exchange' -%}
+              <svg viewBox="0 0 48 48" fill="none"><path d="M10 16h25l-6-6m9 22H13l6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M38 16a14 14 0 0 1 0 16M10 32a14 14 0 0 1 0-16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            {%- else -%}
+              <svg viewBox="0 0 48 48" fill="none"><path d="M5 13h25v22H5V13Zm25 8h7l6 7v7H30V21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="14" cy="37" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="36" cy="37" r="4" stroke="currentColor" stroke-width="1.8"/></svg>
+          {%- endcase -%}
+        </div>
+        <div>
+          <h2 class="manifesto-benefits__title">{{ block.settings.title | escape }}</h2>
+          <p class="manifesto-benefits__text">{{ block.settings.text | escape }}</p>
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  .manifesto-benefits {
+    background: #fff;
+    border-top: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .manifesto-benefits__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-top: 34px;
+    padding-bottom: 34px;
+  }
+
+  .manifesto-benefits__item {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 5px 28px;
+    border-right: 1px solid #dedede;
+  }
+
+  .manifesto-benefits__item:first-child { padding-left: 0; }
+  .manifesto-benefits__item:last-child { padding-right: 0; border-right: 0; }
+
+  .manifesto-benefits__icon { width: 38px; height: 38px; color: #000; }
+  .manifesto-benefits__icon svg { display: block; width: 100%; height: 100%; }
+
+  .manifesto-benefits__title {
+    margin: 0 0 6px;
+    color: #000;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+  }
+
+  .manifesto-benefits__text {
+    margin: 0;
+    color: #6b6b6b;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  @media screen and (max-width: 1100px) {
+    .manifesto-benefits__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; }
+    .manifesto-benefits__item { padding: 20px; border-bottom: 1px solid #dedede; }
+    .manifesto-benefits__item:nth-child(2n) { border-right: 0; }
+    .manifesto-benefits__item:nth-last-child(-n + 2) { border-bottom: 0; }
+    .manifesto-benefits__item:first-child { padding-left: 20px; }
+    .manifesto-benefits__item:last-child { padding-right: 20px; }
+  }
+
+  @media screen and (max-width: 620px) {
+    .manifesto-benefits__grid { grid-template-columns: 1fr; padding-top: 8px; padding-bottom: 8px; }
+    .manifesto-benefits__item,
+    .manifesto-benefits__item:nth-child(2n),
+    .manifesto-benefits__item:nth-last-child(-n + 2) {
+      padding: 20px 4px;
+      border-right: 0;
+      border-bottom: 1px solid #e4e4e4;
+    }
+    .manifesto-benefits__item:last-child { border-bottom: 0; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Benefícios",
+  "tag": "section",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefício",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Ícone",
+          "default": "cotton",
+          "options": [
+            { "value": "cotton", "label": "Algodão" },
+            { "value": "shield", "label": "Segurança" },
+            { "value": "exchange", "label": "Troca" },
+            { "value": "truck", "label": "Envio" }
+          ]
+        },
+        { "type": "text", "id": "title", "label": "Título", "default": "Algodão premium" },
+        { "type": "textarea", "id": "text", "label": "Texto", "default": "Malha encorpada, toque macio e caimento que dura." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefícios",
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "cotton", "title": "Algodão premium", "text": "Malha encorpada, toque macio e caimento que dura." } },
+        { "type": "benefit", "settings": { "icon": "shield", "title": "Compra segura", "text": "Ambiente protegido e pagamento criptografado." } },
+        { "type": "benefit", "settings": { "icon": "exchange", "title": "Troca facilitada", "text": "Não amou? A gente resolve rápido, sem estresse." } },
+        { "type": "benefit", "settings": { "icon": "truck", "title": "Envio para todo o Brasil", "text": "Despachamos rápido, com código de rastreio." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

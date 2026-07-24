@@ -1,83 +1,299 @@
-{%- comment -%}
-  ============================================================
-  FEATURED COLLECTION — vitrine de produtos de uma coleção
-  ============================================================
-
-  O QUE FAZ:
-  Exibe um título + grade de produtos de UMA coleção escolhida, com
-  quantidade e número de colunas configuráveis. Mostra link "ver
-  tudo" quando a coleção tem mais produtos do que o limite exibido.
-
-  ONDE É USADA:
-  Seção reutilizável (tem preset) — comum na home.
-
-  PRINCIPAIS PARTES:
-  - collection = collections[section.settings.collection]
-  - render 'card-product': card de cada produto
-  - Placeholders (product-1 + título fake) quando coleção vazia
-  - Settings: heading, collection, products_to_show, columns_desktop,
-    show_view_all
-  - Colunas via --grid-columns inline (style no wrapper)
-
-  OBSERVAÇÕES:
-  show_view_all só aparece se total_products > limit exibido.
-{%- endcomment -%}
 {%- liquid
   assign collection = collections[section.settings.collection]
   assign limit = section.settings.products_to_show | plus: 0
   assign total_products = collection.all_products_count | plus: 0
 -%}
-<div class="featured-collection page-width" data-section-id="{{ section.id }}" style="--grid-columns: {{ section.settings.columns_desktop }};">
-  <div class="featured-collection__header">
-    {%- if section.settings.heading != blank -%}
-      <h2 class="featured-collection__heading">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
-    {%- if section.settings.show_view_all and total_products > limit -%}
-      <a href="{{ collection.url }}" class="featured-collection__view-all button button--secondary"
-         aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: collection.title }}">
-        {{ 'sections.featured_collection.view_all' | t }}
-      </a>
+
+<section class="manifesto-featured" data-section-id="{{ section.id }}">
+  <div class="manifesto-featured__inner page-width" style="--grid-columns: {{ section.settings.columns_desktop }};">
+    <header class="manifesto-featured__header">
+      <div>
+        {%- if section.settings.heading != blank -%}
+          <h2 class="manifesto-featured__heading">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="manifesto-featured__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_view_all and total_products > limit -%}
+        <a href="{{ collection.url }}" class="manifesto-featured__view-all">VER TODAS</a>
+      {%- endif -%}
+    </header>
+
+    {%- if collection.products.size > 0 -%}
+      <ul class="manifesto-product-grid" role="list">
+        {%- for product in collection.products limit: limit -%}
+          <li>{% render 'card-product', card_product: product, pix_discount: section.settings.pix_discount %}</li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <ul class="manifesto-product-grid" role="list">
+        {%- for i in (1..limit) -%}
+          {%- assign placeholder_index = forloop.index0 | modulo: 6 | plus: 1 -%}
+          {%- assign placeholder_name = 'product-' | append: placeholder_index -%}
+          <li>
+            <article class="manifesto-product-card manifesto-product-card--placeholder">
+              <div class="manifesto-product-card__media" style="--card-ratio: 0.8;">
+                {{ placeholder_name | placeholder_svg_tag: 'manifesto-product-card__image placeholder-svg' }}
+              </div>
+              <div class="manifesto-product-card__content">
+                <h3 class="manifesto-product-card__title">CAMISETA MANIFESTO</h3>
+                <div class="manifesto-product-card__price-row">
+                  <s class="manifesto-product-card__compare">R$ 129,90</s>
+                  <span class="manifesto-product-card__price">R$ 99,90</span>
+                </div>
+                <p class="manifesto-product-card__pix"><strong>R$ 94,90</strong> no Pix <span>5% OFF</span></p>
+                <div class="manifesto-product-card__swatches">
+                  <span class="manifesto-product-card__swatch" style="--swatch:#111"></span>
+                  <span class="manifesto-product-card__swatch" style="--swatch:#fff"></span>
+                </div>
+                <span class="manifesto-product-card__button">COMPRAR</span>
+              </div>
+            </article>
+          </li>
+        {%- endfor -%}
+      </ul>
     {%- endif -%}
   </div>
-
-  {%- if collection.products.size > 0 -%}
-    <ul class="product-grid" role="list">
-      {%- for product in collection.products limit: limit -%}
-        <li>{% render 'card-product', card_product: product %}</li>
-      {%- endfor -%}
-    </ul>
-  {%- else -%}
-    <ul class="product-grid" role="list">
-      {%- for i in (1..limit) -%}
-        <li>
-          <div class="card-product">
-            <div class="card-product__media">{{ 'product-1' | placeholder_svg_tag: 'card-product__image placeholder-svg' }}</div>
-            <div class="card-product__info"><h3 class="card-product__title">{{ 'onboarding.product_title' | t }}</h3></div>
-          </div>
-        </li>
-      {%- endfor -%}
-    </ul>
-  {%- endif -%}
-</div>
+</section>
 
 <style>
-  .featured-collection { padding-top: var(--spacing-sections); padding-bottom: var(--spacing-sections); }
-  .featured-collection__header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-  .featured-collection__heading { font-size: var(--f6); }
-  .product-grid { --grid-columns: 4; }
+  .manifesto-featured {
+    padding: clamp(70px, 8vw, 120px) 0;
+    background: #fff;
+  }
+
+  .manifesto-featured__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: clamp(34px, 4vw, 56px);
+  }
+
+  .manifesto-featured__heading {
+    margin: 0 0 9px;
+    color: #000;
+    font-size: clamp(28px, 4vw, 50px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+  }
+
+  .manifesto-featured__subheading {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .manifesto-featured__view-all {
+    flex: 0 0 auto;
+    padding-bottom: 7px;
+    color: #000;
+    border-bottom: 1px solid #000;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+
+  .manifesto-product-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns, 4), minmax(0, 1fr));
+    gap: clamp(20px, 2.2vw, 36px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .manifesto-product-card { display: flex; flex-direction: column; min-width: 0; }
+  .manifesto-product-card__media-link { display: block; color: inherit; text-decoration: none; }
+
+  .manifesto-product-card__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--card-ratio, 0.8);
+    overflow: hidden;
+    background: #f2f2f2;
+  }
+
+  .manifesto-product-card__image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.38s ease, transform 0.55s ease;
+  }
+
+  .manifesto-product-card__image--secondary { opacity: 0; }
+
+  .manifesto-product-card:hover .manifesto-product-card__image--primary {
+    opacity: 0;
+    transform: scale(1.025);
+  }
+
+  .manifesto-product-card:hover .manifesto-product-card__image--secondary {
+    opacity: 1;
+    transform: scale(1.025);
+  }
+
+  .manifesto-product-card__badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    padding: 8px 10px;
+    color: #fff;
+    background: #000;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.08em;
+  }
+
+  .manifesto-product-card__hover-label {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    z-index: 2;
+    padding: 13px 16px;
+    color: #000;
+    background: rgba(255, 255, 255, 0.94);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.11em;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .manifesto-product-card:hover .manifesto-product-card__hover-label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .manifesto-product-card__content { display: flex; flex-direction: column; flex: 1; padding-top: 18px; }
+  .manifesto-product-card__title-link { color: #000; text-decoration: none; }
+
+  .manifesto-product-card__title {
+    min-height: 2.6em;
+    margin: 0 0 9px;
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+
+  .manifesto-product-card__price-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 6px;
+  }
+
+  .manifesto-product-card__compare { color: #8a8a8a; font-size: 12px; }
+  .manifesto-product-card__price { color: #000; font-size: 15px; font-weight: 800; }
+
+  .manifesto-product-card__pix {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 0;
+    color: #515151;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .manifesto-product-card__pix strong { color: #000; font-weight: 700; }
+  .manifesto-product-card__pix span { padding: 3px 5px; color: #fff; background: #000; font-size: 8px; font-weight: 800; letter-spacing: 0.05em; }
+
+  .manifesto-product-card__swatches {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 28px;
+    margin: 12px 0 14px;
+  }
+
+  .manifesto-product-card__swatch {
+    display: block;
+    width: 15px;
+    height: 15px;
+    background: var(--swatch, #ddd);
+    border: 1px solid #c9c9c9;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+
+  .manifesto-product-card__button {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 48px;
+    margin-top: auto;
+    color: #fff;
+    background: #000;
+    border: 1px solid #000;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.22s ease, background 0.22s ease;
+  }
+
+  .manifesto-product-card__button:hover { color: #000; background: #fff; }
+  .manifesto-product-card__button--disabled { opacity: 0.45; pointer-events: none; }
+
+  @media screen and (max-width: 1000px) {
+    .manifesto-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media screen and (max-width: 620px) {
+    .manifesto-featured { padding: 62px 0; }
+    .manifesto-featured__header { align-items: flex-start; margin-bottom: 30px; }
+    .manifesto-featured__heading { font-size: 31px; }
+    .manifesto-featured__subheading { max-width: 250px; font-size: 12px; }
+    .manifesto-featured__view-all { display: none; }
+    .manifesto-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 10px; }
+    .manifesto-product-card__content { padding-top: 12px; }
+    .manifesto-product-card__title { min-height: 3.9em; margin-bottom: 7px; font-size: 11px; }
+    .manifesto-product-card__compare { font-size: 10px; }
+    .manifesto-product-card__price { font-size: 12px; }
+    .manifesto-product-card__pix { display: block; font-size: 9px; }
+    .manifesto-product-card__pix span { display: inline-block; margin-left: 2px; }
+    .manifesto-product-card__swatches { margin: 9px 0 11px; }
+    .manifesto-product-card__button { min-height: 42px; font-size: 9px; }
+    .manifesto-product-card__badge { top: 8px; left: 8px; padding: 6px 7px; font-size: 8px; }
+    .manifesto-product-card__hover-label { display: none; }
+  }
 </style>
 
 {% schema %}
 {
-  "name": "t:sections.featured_collection.name",
+  "name": "Mais vendidas",
   "tag": "section",
   "settings": [
-    { "type": "text", "id": "heading", "default": "Featured collection", "label": "t:sections.featured_collection.settings.heading.label" },
-    { "type": "collection", "id": "collection", "label": "t:sections.featured_collection.settings.collection.label" },
-    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "default": 4, "label": "t:sections.featured_collection.settings.products_to_show.label" },
-    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "default": 4, "label": "t:sections.featured_collection.settings.columns_desktop.label" },
-    { "type": "checkbox", "id": "show_view_all", "default": true, "label": "t:sections.featured_collection.settings.show_view_all.label" }
+    { "type": "text", "id": "heading", "label": "Título", "default": "MAIS VENDIDAS" },
+    { "type": "text", "id": "subheading", "label": "Subtítulo", "default": "Confira as escolhas mais populares do momento." },
+    { "type": "collection", "id": "collection", "label": "Coleção" },
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "default": 4, "label": "Produtos exibidos" },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "default": 4, "label": "Colunas no desktop" },
+    { "type": "range", "id": "pix_discount", "min": 0, "max": 20, "step": 1, "unit": "%", "default": 5, "label": "Desconto no Pix" },
+    { "type": "checkbox", "id": "show_view_all", "default": true, "label": "Mostrar ver todas" }
   ],
-  "presets": [{ "name": "t:sections.featured_collection.name" }]
+  "presets": [{ "name": "Mais vendidas" }]
 }
 {% endschema %}

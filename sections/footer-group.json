@@ -1,9 +1,43 @@
 {
   "type": "footer",
-  "name": "t:section_groups.footer.name",
+  "name": "Rodapé",
   "sections": {
     "footer": {
-      "type": "footer"
+      "type": "footer",
+      "blocks": {
+        "brand": {
+          "type": "brand",
+          "settings": {
+            "text": "<p>Frases que não pedem licença. Vista o que você pensa.</p>"
+          }
+        },
+        "menu": {
+          "type": "menu",
+          "settings": {
+            "heading": "Navegação"
+          }
+        },
+        "support": {
+          "type": "text",
+          "settings": {
+            "heading": "Atendimento",
+            "text": "<p>Segunda a sexta, das 9h às 18h. Fale com a gente pela página de contato.</p>"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Receba os próximos drops",
+            "text": "Novas frases, lançamentos e condições exclusivas direto no seu e-mail."
+          }
+        }
+      },
+      "block_order": ["brand", "menu", "support", "newsletter"],
+      "settings": {
+        "manifesto_text": "VISTA O QUE VOCÊ PENSA.",
+        "show_social": true,
+        "show_payment_icons": true
+      }
     }
   },
   "order": ["footer"]

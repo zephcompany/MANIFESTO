@@ -1,0 +1,92 @@
+<section class="manifesto-social-proof" data-section-id="{{ section.id }}">
+  <div class="manifesto-social-proof__inner page-width">
+    <div class="manifesto-social-proof__eyebrow">{{ section.settings.eyebrow | escape }}</div>
+    <div class="manifesto-social-proof__content">
+      <strong class="manifesto-social-proof__number">{{ section.settings.number | escape }}</strong>
+      <div>
+        <h2 class="manifesto-social-proof__title">{{ section.settings.heading | escape }}</h2>
+        <p class="manifesto-social-proof__text">{{ section.settings.text | escape }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .manifesto-social-proof {
+    padding: clamp(72px, 9vw, 130px) 0;
+    color: #fff;
+    background: #000;
+  }
+
+  .manifesto-social-proof__inner {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.45fr) minmax(0, 1.55fr);
+    gap: clamp(35px, 7vw, 110px);
+    align-items: start;
+  }
+
+  .manifesto-social-proof__eyebrow {
+    padding-top: 12px;
+    color: #a8a8a8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .manifesto-social-proof__content {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(28px, 5vw, 74px);
+    align-items: center;
+  }
+
+  .manifesto-social-proof__number {
+    color: #fff;
+    font-family: var(--font-heading-family);
+    font-size: clamp(78px, 12vw, 190px);
+    font-weight: 800;
+    line-height: 0.76;
+    letter-spacing: -0.08em;
+  }
+
+  .manifesto-social-proof__title {
+    max-width: 600px;
+    margin: 0 0 13px;
+    color: #fff;
+    font-size: clamp(28px, 4vw, 55px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  .manifesto-social-proof__text {
+    max-width: 530px;
+    margin: 0;
+    color: #a8a8a8;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  @media screen and (max-width: 800px) {
+    .manifesto-social-proof__inner { grid-template-columns: 1fr; gap: 30px; }
+    .manifesto-social-proof__eyebrow { padding-top: 0; }
+    .manifesto-social-proof__content { grid-template-columns: 1fr; gap: 26px; }
+    .manifesto-social-proof__number { font-size: clamp(90px, 29vw, 150px); }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Número e depoimento",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Texto pequeno", "default": "QUEM VESTE, MANIFESTA" },
+    { "type": "text", "id": "number", "label": "Número", "default": "+720" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "clientes satisfeitos" },
+    { "type": "textarea", "id": "text", "label": "Texto", "default": "Pessoas que escolheram vestir ideias grandes demais para ficar só na cabeça." }
+  ],
+  "presets": [{ "name": "Número e depoimento" }]
+}
+{% endschema %}

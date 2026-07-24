@@ -1,0 +1,64 @@
+<section class="manifesto-marquee" data-section-id="{{ section.id }}" aria-label="{{ section.settings.text | escape }}">
+  <div class="manifesto-marquee__track">
+    {%- for i in (1..10) -%}
+      <span class="manifesto-marquee__item" {% if i > 5 %}aria-hidden="true"{% endif %}>
+        {{ section.settings.text | escape }}
+        <span class="manifesto-marquee__symbol">✦</span>
+      </span>
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  .manifesto-marquee {
+    width: 100%;
+    overflow: hidden;
+    color: #000;
+    background: #fff;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+  }
+
+  .manifesto-marquee__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: manifesto-marquee-{{ section.id }} 28s linear infinite;
+  }
+
+  .manifesto-marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 28px;
+    padding: 23px 28px;
+    font-family: var(--font-heading-family);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .manifesto-marquee__symbol { font-size: 18px; }
+
+  @keyframes manifesto-marquee-{{ section.id }} {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .manifesto-marquee__track { animation-play-state: paused; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Faixa horizontal",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Texto", "default": "VISTA O QUE VOCÊ PENSA" }
+  ],
+  "presets": [{ "name": "Faixa horizontal" }]
+}
+{% endschema %}

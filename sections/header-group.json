@@ -1,9 +1,29 @@
 {
   "type": "header",
-  "name": "t:section_groups.header.name",
+  "name": "Cabeçalho",
   "sections": {
     "nav": {
-      "type": "nav"
+      "type": "nav",
+      "blocks": {
+        "inicio": {
+          "type": "menu_item",
+          "settings": { "label": "Início", "link": "/" }
+        },
+        "camisetas": {
+          "type": "menu_item",
+          "settings": { "label": "Camisetas", "link": "/collections/all" }
+        },
+        "rastreio": {
+          "type": "menu_item",
+          "settings": { "label": "Rastreie seu pedido", "link": "/pages/rastreie-seu-pedido" }
+        },
+        "contato": {
+          "type": "menu_item",
+          "settings": { "label": "Entre em contato", "link": "/pages/contato" }
+        }
+      },
+      "block_order": ["inicio", "camisetas", "rastreio", "contato"],
+      "settings": {}
     }
   },
   "order": ["nav"]
