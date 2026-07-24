@@ -52,7 +52,9 @@
 
     {% render 'meta-tags' %}
 
-    {{ 'index.css' | asset_url | stylesheet_tag }}
+    {{ 'fontes.css' | asset_url | stylesheet_tag }}
+    {{ 'normalizar.css' | asset_url | stylesheet_tag }}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
     {% render 'css-variables' %}
 
     <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
