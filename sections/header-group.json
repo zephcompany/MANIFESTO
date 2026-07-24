@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "Cabeçalho",
@@ -40,10 +49,7 @@
         "rastreio",
         "contato"
       ],
-      "settings": {
-        "show_top_bar": true,
-        "top_bar_text": "5% OFF NO PIX|VISTA O QUE VOCÊ PENSA|FRETE GRÁTIS NAS CONDIÇÕES DA CAMPANHA|COMPRE 2 E LEVE 3"
-      }
+      "settings": {}
     }
   },
   "order": [

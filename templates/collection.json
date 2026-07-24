@@ -1,11 +1,48 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "banner": {
-      "type": "collection-banner"
+      "type": "collection-banner",
+      "settings": {
+        "show_description": true,
+        "show_image": false
+      }
+    },
+    "featured_collection_PAhBDX": {
+      "type": "featured-collection",
+      "name": "Coleção em destaque",
+      "settings": {
+        "heading": "MAIS VENDIDAS",
+        "subheading": "Confira as escolhas mais populares do momento.",
+        "collection": "",
+        "show_all_products": true,
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "pix_discount": 5,
+        "show_view_all": false
+      }
     },
     "product-grid": {
-      "type": "main-collection"
+      "type": "main-collection",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "enable_sorting": true,
+        "enable_filtering": true
+      }
     }
   },
-  "order": ["banner", "product-grid"]
+  "order": [
+    "banner",
+    "featured_collection_PAhBDX",
+    "product-grid"
+  ]
 }
