@@ -1,107 +1,51 @@
-{%- comment -%}
-  ============================================================
-  COLLECTION BANNER — cabeçalho da página de coleção
-  ============================================================
 
-  O QUE FAZ:
-  Exibe o topo da página de coleção: título da coleção e,
-  opcionalmente, a imagem e a descrição da coleção.
-
-  ONDE É USADA:
-  No template de coleção (templates/collection.json), geralmente
-  acima da section main-collection.
-
-  PRINCIPAIS PARTES:
-  - Imagem (collection-banner__media): renderizada só se o setting
-    show_image estiver ligado e a coleção tiver imagem.
-  - Título (h1) com collection.title.
-  - Descrição (rte): renderizada só se show_description estiver
-    ligado e collection.description existir.
-
-  OBSERVAÇÕES:
-  - Usa os dados da coleção atual (objeto collection); não tem
-    campos de texto próprios no schema, apenas os toggles de
-    imagem e descrição.
-  - Estilos inline no <style>, escopados por
-    #shopify-section-{{ section.id }}.
-{%- endcomment -%}
-
-<div class="collection-banner page-width" data-section-id="{{ section.id }}">
-  {%- if section.settings.show_image and collection.image -%}
-    <div class="collection-banner__media">
-      {{
-        collection.image
-        | image_url: width: 1920
-        | image_tag:
-          loading: 'eager',
-          sizes: '100vw',
-          widths: '540, 720, 900, 1080, 1440, 1920',
-          class: 'collection-banner__image',
-          alt: collection.image.alt | default: collection.title | escape
-      }}
-    </div>
-  {%- endif -%}
-
-  <div class="collection-banner__text">
-    <h1 class="collection-banner__title">{{ collection.title }}</h1>
+<div class="manifesto-collection-banner page-width" data-section-id="{{ section.id }}">
+  <div class="manifesto-collection-banner__text">
+    <p class="manifesto-collection-banner__eyebrow">COLEÇÃO</p>
+    <h1 class="manifesto-collection-banner__title">{{ collection.title }}</h1>
     {%- if section.settings.show_description and collection.description != blank -%}
-      <div class="collection-banner__description rte">{{ collection.description }}</div>
+      <div class="manifesto-collection-banner__description rte">{{ collection.description }}</div>
     {%- endif -%}
   </div>
 </div>
 
 <style>
-  #shopify-section-{{ section.id }} .collection-banner {
-    margin-top: 24px;
-    margin-bottom: 24px;
+  .manifesto-collection-banner {
+    padding-top: clamp(42px, 6vw, 70px);
+    padding-bottom: clamp(22px, 4vw, 36px);
+    border-bottom: 1px solid #efefef;
   }
-  #shopify-section-{{ section.id }} .collection-banner__media {
-    width: 100%;
-    margin-bottom: 20px;
-    overflow: hidden;
-    border-radius: var(--media-radius, 8px);
-    background-color: var(--color-background-contrast, #f2f3f8);
+  .manifesto-collection-banner__text { max-width: 760px; }
+  .manifesto-collection-banner__eyebrow {
+    margin: 0 0 10px;
+    color: #666;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
-  #shopify-section-{{ section.id }} .collection-banner__image {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  #shopify-section-{{ section.id }} .collection-banner__text {
-    text-align: center;
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  #shopify-section-{{ section.id }} .collection-banner__title {
-    font-size: var(--f7);
+  .manifesto-collection-banner__title {
     margin: 0;
+    font-size: clamp(34px, 6vw, 64px);
+    line-height: 0.95;
+    text-transform: uppercase;
   }
-  #shopify-section-{{ section.id }} .collection-banner__description {
-    margin-top: 12px;
-    font-size: var(--f2);
-    color: var(--color-text, #000);
-    opacity: 0.8;
+  .manifesto-collection-banner__description {
+    margin-top: 14px;
+    color: #585858;
+    font-size: 15px;
+    line-height: 1.65;
   }
 </style>
 
 {% schema %}
 {
-  "name": "t:sections.collection_banner.name",
+  "name": "Cabeçalho da coleção",
   "tag": "section",
   "class": "section-collection-banner",
   "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_description",
-      "default": true,
-      "label": "t:sections.collection_banner.settings.show_description.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_image",
-      "default": false,
-      "label": "t:sections.collection_banner.settings.show_image.label"
-    }
+    { "type": "checkbox", "id": "show_description", "default": true, "label": "Mostrar descrição" },
+    { "type": "checkbox", "id": "show_image", "default": false, "label": "Mostrar imagem" }
   ]
 }
 {% endschema %}

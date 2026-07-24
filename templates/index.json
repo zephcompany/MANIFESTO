@@ -7,6 +7,16 @@
         "link_label": "Ver coleção"
       }
     },
+    "popup": {
+      "type": "manifesto-popup",
+      "settings": {
+        "eyebrow": "Clube Manifesto",
+        "heading": "10% OFF NA PRIMEIRA COMPRA",
+        "text": "Entre no grupo VIP e receba o cupom + lançamentos e ofertas antes de todo mundo.",
+        "placeholder": "E-mail ou WhatsApp",
+        "button_label": "Quero meu desconto"
+      }
+    },
     "benefits": {
       "type": "manifesto-benefits",
       "blocks": {
@@ -43,7 +53,12 @@
           }
         }
       },
-      "block_order": ["premium", "secure", "exchange", "shipping"],
+      "block_order": [
+        "premium",
+        "secure",
+        "exchange",
+        "shipping"
+      ],
       "settings": {}
     },
     "featured": {
@@ -52,18 +67,39 @@
         "heading": "MAIS VENDIDAS",
         "subheading": "Confira as escolhas mais populares do momento.",
         "collection": "all",
-        "products_to_show": 4,
+        "show_all_products": true,
+        "products_to_show": 8,
         "columns_desktop": 4,
         "pix_discount": 5,
-        "show_view_all": true
+        "show_view_all": false
       }
     },
     "social_proof": {
       "type": "manifesto-social-proof",
+      "blocks": {
+        "video_1": {
+          "type": "testimonial",
+          "settings": {
+            "name": "Cliente 01",
+            "rating": "5"
+          }
+        },
+        "video_2": {
+          "type": "testimonial",
+          "settings": {
+            "name": "Cliente 02",
+            "rating": "4.5"
+          }
+        }
+      },
+      "block_order": [
+        "video_1",
+        "video_2"
+      ],
       "settings": {
         "eyebrow": "QUEM VESTE, MANIFESTA",
         "number": "+720",
-        "heading": "clientes satisfeitos",
+        "heading": "CLIENTES SATISFEITOS",
         "text": "Pessoas que escolheram vestir ideias grandes demais para ficar só na cabeça."
       }
     },
@@ -112,7 +148,13 @@
           }
         }
       },
-      "block_order": ["shipping", "size", "exchange", "payment", "tracking"],
+      "block_order": [
+        "shipping",
+        "size",
+        "exchange",
+        "payment",
+        "tracking"
+      ],
       "settings": {
         "eyebrow": "DÚVIDAS FREQUENTES",
         "heading": "FAQ",
@@ -120,5 +162,13 @@
       }
     }
   },
-  "order": ["hero", "benefits", "featured", "social_proof", "marquee", "faq"]
+  "order": [
+    "hero",
+    "popup",
+    "benefits",
+    "featured",
+    "social_proof",
+    "marquee",
+    "faq"
+  ]
 }

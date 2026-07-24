@@ -25,7 +25,7 @@
                   alt: shop.name | escape
               }}
             {%- else -%}
-              <p class="manifesto-footer__brand-name">{{ shop.name }}</p>
+              <img src="{{ 'manifesto-logo.svg' | asset_url }}" alt="{{ shop.name | escape }}" class="manifesto-footer__logo" loading="lazy" width="260" height="70">
             {%- endif -%}
 
             {%- if block.settings.text != blank -%}

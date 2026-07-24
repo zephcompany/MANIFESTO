@@ -1,0 +1,108 @@
+
+<section class="manifesto-popup" data-section-id="{{ section.id }}" hidden>
+  <div class="manifesto-popup__card">
+    <button type="button" class="manifesto-popup__close" aria-label="Fechar popup">×</button>
+    <p class="manifesto-popup__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    <h2 class="manifesto-popup__title">{{ section.settings.heading | escape }}</h2>
+    <p class="manifesto-popup__text">{{ section.settings.text | escape }}</p>
+
+    <form class="manifesto-popup__form" action="{{ section.settings.group_link | default: routes.root_url }}" method="get">
+      <label class="visually-hidden" for="PopupField-{{ section.id }}">E-mail ou WhatsApp</label>
+      <input id="PopupField-{{ section.id }}" type="text" class="field__input" placeholder="{{ section.settings.placeholder | escape }}">
+      <button type="submit" class="button manifesto-popup__button">{{ section.settings.button_label | escape }}</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .manifesto-popup {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 55;
+    width: min(380px, calc(100vw - 28px));
+  }
+  .manifesto-popup__card {
+    position: relative;
+    padding: 26px 22px 22px;
+    color: #000;
+    background: #fff;
+    border: 1px solid #d8d8d8;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+  }
+  .manifesto-popup__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    color: #000;
+    background: transparent;
+    border: 0;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .manifesto-popup__eyebrow {
+    margin: 0 0 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .manifesto-popup__title {
+    margin: 0 0 12px;
+    font-size: clamp(24px, 3.8vw, 34px);
+    font-weight: 800;
+    line-height: 0.98;
+    text-transform: uppercase;
+  }
+  .manifesto-popup__text {
+    margin: 0 0 18px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .manifesto-popup__form { display: grid; gap: 10px; }
+  .manifesto-popup__button { width: 100%; }
+  @media screen and (max-width: 749px) {
+    .manifesto-popup { right: 14px; bottom: 14px; width: calc(100vw - 28px); }
+    .manifesto-popup__card { padding: 24px 18px 18px; }
+  }
+</style>
+
+<script>
+  (function () {
+    var popup = document.querySelector('.manifesto-popup[data-section-id="{{ section.id }}"]');
+    if (!popup) return;
+    var key = 'manifesto-popup-closed';
+    if (!window.localStorage || localStorage.getItem(key) !== '1') {
+      popup.hidden = false;
+    }
+    var closeBtn = popup.querySelector('.manifesto-popup__close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        popup.hidden = true;
+        try { localStorage.setItem(key, '1'); } catch (e) {}
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Popup Clube Manifesto",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Texto pequeno", "default": "Clube Manifesto" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "10% OFF NA PRIMEIRA COMPRA" },
+    { "type": "textarea", "id": "text", "label": "Descrição", "default": "Entre no grupo VIP e receba o cupom + lançamentos e ofertas antes de todo mundo." },
+    { "type": "text", "id": "placeholder", "label": "Placeholder", "default": "E-mail ou WhatsApp" },
+    { "type": "text", "id": "button_label", "label": "Texto do botão", "default": "Quero meu desconto" },
+    { "type": "url", "id": "group_link", "label": "Link do grupo" }
+  ],
+  "presets": [{ "name": "Popup Clube Manifesto" }]
+}
+{% endschema %}

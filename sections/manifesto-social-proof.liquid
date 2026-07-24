@@ -1,3 +1,4 @@
+
 <section class="manifesto-social-proof" data-section-id="{{ section.id }}">
   <div class="manifesto-social-proof__inner page-width">
     <div class="manifesto-social-proof__eyebrow">{{ section.settings.eyebrow | escape }}</div>
@@ -8,23 +9,62 @@
         <p class="manifesto-social-proof__text">{{ section.settings.text | escape }}</p>
       </div>
     </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="manifesto-social-proof__videos">
+        {%- for block in section.blocks -%}
+          {%- assign video_url = block.settings.video_url -%}
+          <article class="manifesto-testimonial" {{ block.shopify_attributes }}>
+            <div class="manifesto-testimonial__video-wrapper">
+              {%- if video_url != blank -%}
+                {%- if video_url.type == 'youtube' -%}
+                  <iframe
+                    src="https://www.youtube.com/embed/{{ video_url.id }}?rel=0&modestbranding=1"
+                    title="Depoimento de {{ block.settings.name | escape }}"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  ></iframe>
+                {%- elsif video_url.type == 'vimeo' -%}
+                  <iframe
+                    src="https://player.vimeo.com/video/{{ video_url.id }}"
+                    title="Depoimento de {{ block.settings.name | escape }}"
+                    loading="lazy"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                {%- endif -%}
+              {%- else -%}
+                <div class="manifesto-testimonial__placeholder">Adicione o link do vídeo</div>
+              {%- endif -%}
+            </div>
+            <div class="manifesto-testimonial__meta">
+              <h3 class="manifesto-testimonial__name">{{ block.settings.name | escape }}</h3>
+              <div class="manifesto-testimonial__rating" style="--rating: {{ block.settings.rating | default: 5 }};">
+                <span class="manifesto-testimonial__stars-bg">★★★★★</span>
+                <span class="manifesto-testimonial__stars-fill">★★★★★</span>
+                <strong>{{ block.settings.rating | default: 5 }}</strong>
+              </div>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
 <style>
   .manifesto-social-proof {
-    padding: clamp(72px, 9vw, 130px) 0;
+    padding: clamp(72px, 9vw, 130px) 0 0;
     color: #fff;
     background: #000;
   }
-
   .manifesto-social-proof__inner {
     display: grid;
     grid-template-columns: minmax(150px, 0.45fr) minmax(0, 1.55fr);
     gap: clamp(35px, 7vw, 110px);
     align-items: start;
   }
-
   .manifesto-social-proof__eyebrow {
     padding-top: 12px;
     color: #a8a8a8;
@@ -33,14 +73,12 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
   }
-
   .manifesto-social-proof__content {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     gap: clamp(28px, 5vw, 74px);
     align-items: center;
   }
-
   .manifesto-social-proof__number {
     color: #fff;
     font-family: var(--font-heading-family);
@@ -49,7 +87,6 @@
     line-height: 0.76;
     letter-spacing: -0.08em;
   }
-
   .manifesto-social-proof__title {
     max-width: 600px;
     margin: 0 0 13px;
@@ -60,7 +97,6 @@
     letter-spacing: -0.04em;
     text-transform: uppercase;
   }
-
   .manifesto-social-proof__text {
     max-width: 530px;
     margin: 0;
@@ -68,25 +104,119 @@
     font-size: 14px;
     line-height: 1.65;
   }
+  .manifesto-social-proof__videos {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    padding: 0 0 72px;
+  }
+  .manifesto-testimonial {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #0d0d0d;
+    border: 1px solid #1f1f1f;
+  }
+  .manifesto-testimonial__video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #111;
+  }
+  .manifesto-testimonial__video-wrapper iframe,
+  .manifesto-testimonial__placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .manifesto-testimonial__placeholder {
+    display: grid;
+    place-items: center;
+    color: #9d9d9d;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .manifesto-testimonial__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 20px 20px;
+  }
+  .manifesto-testimonial__name {
+    margin: 0;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .manifesto-testimonial__rating {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .manifesto-testimonial__stars-bg,
+  .manifesto-testimonial__stars-fill {
+    font-size: 14px;
+    letter-spacing: 0.12em;
+  }
+  .manifesto-testimonial__rating {
+    --stars-color: #3f3f3f;
+    --stars-fill: #fff;
+  }
+  .manifesto-testimonial__stars-bg { color: var(--stars-color); }
+  .manifesto-testimonial__stars-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc((var(--rating) / 5) * 5.95em);
+    overflow: hidden;
+    color: var(--stars-fill);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .manifesto-testimonial__rating strong { padding-left: 5.8em; }
 
   @media screen and (max-width: 800px) {
     .manifesto-social-proof__inner { grid-template-columns: 1fr; gap: 30px; }
     .manifesto-social-proof__eyebrow { padding-top: 0; }
     .manifesto-social-proof__content { grid-template-columns: 1fr; gap: 26px; }
     .manifesto-social-proof__number { font-size: clamp(90px, 29vw, 150px); }
+    .manifesto-social-proof__videos { grid-template-columns: 1fr; padding-bottom: 56px; }
+    .manifesto-testimonial__meta { align-items: flex-start; flex-direction: column; }
   }
 </style>
 
 {% schema %}
 {
-  "name": "Número e depoimento",
+  "name": "Número e depoimentos",
   "tag": "section",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Texto pequeno", "default": "QUEM VESTE, MANIFESTA" },
     { "type": "text", "id": "number", "label": "Número", "default": "+720" },
-    { "type": "text", "id": "heading", "label": "Título", "default": "clientes satisfeitos" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "CLIENTES SATISFEITOS" },
     { "type": "textarea", "id": "text", "label": "Texto", "default": "Pessoas que escolheram vestir ideias grandes demais para ficar só na cabeça." }
   ],
-  "presets": [{ "name": "Número e depoimento" }]
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Vídeo de depoimento",
+      "settings": [
+        { "type": "video_url", "id": "video_url", "label": "Link do vídeo", "accept": ["youtube", "vimeo"] },
+        { "type": "text", "id": "name", "label": "Nome", "default": "Cliente" },
+        { "type": "text", "id": "rating", "label": "Nota", "default": "5" }
+      ]
+    }
+  ],
+  "max_blocks": 2,
+  "presets": [{ "name": "Número e depoimentos" }]
 }
 {% endschema %}

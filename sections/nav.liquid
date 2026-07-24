@@ -1,104 +1,162 @@
-<header class="manifesto-header" data-section-id="{{ section.id }}">
-  <div class="manifesto-header__inner page-width">
-    <button
-      type="button"
-      class="manifesto-header__menu-toggle tap-target"
-      aria-label="Abrir menu"
-      aria-expanded="false"
-      aria-controls="MobileNav-{{ section.id }}"
-    >
-      <span class="manifesto-header__burger"></span>
-    </button>
 
-    <nav class="manifesto-header__nav" aria-label="Navegação principal">
-      <ul class="manifesto-header__menu" role="list">
+<div class="manifesto-header-wrapper" data-section-id="{{ section.id }}">
+  {%- if section.settings.show_top_bar -%}
+    <div class="manifesto-topbar" aria-label="Informações da loja">
+      <div class="manifesto-topbar__track">
+        {%- assign items = section.settings.top_bar_text | split: '|' -%}
+        {%- for repeat in (1..2) -%}
+          {%- for item in items -%}
+            {%- assign clean_item = item | strip -%}
+            {%- if clean_item != blank -%}
+              <span class="manifesto-topbar__item{% if repeat == 2 %} is-clone{% endif %}">
+                {{ clean_item | escape }}
+                <span class="manifesto-topbar__dot">✦</span>
+              </span>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <header class="manifesto-header">
+    <div class="manifesto-header__inner page-width">
+      <button
+        type="button"
+        class="manifesto-header__menu-toggle tap-target"
+        aria-label="Abrir menu"
+        aria-expanded="false"
+        aria-controls="MobileNav-{{ section.id }}"
+      >
+        <span class="manifesto-header__burger"></span>
+      </button>
+
+      <nav class="manifesto-header__nav" aria-label="Navegação principal">
+        <ul class="manifesto-header__menu" role="list">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>
+              <a href="{{ block.settings.link | default: routes.root_url }}" class="manifesto-header__menu-link">
+                {{ block.settings.label | escape }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+
+      <a href="{{ routes.root_url }}" class="manifesto-header__logo-link" aria-label="{{ shop.name | escape }}">
+        {%- if settings.logo != blank -%}
+          {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+          {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+          {{
+            settings.logo
+            | image_url: width: 600
+            | image_tag:
+              class: 'manifesto-header__logo-image',
+              widths: '120, 180, 240, 360, 480, 600',
+              width: settings.logo_width,
+              height: logo_height,
+              alt: logo_alt,
+              sizes: '(max-width: 749px) 130px, 190px'
+          }}
+        {%- else -%}
+          <img
+            src="{{ 'manifesto-logo.svg' | asset_url }}"
+            alt="{{ shop.name | escape }}"
+            class="manifesto-header__logo-image"
+            loading="eager"
+            width="260"
+            height="70"
+          >
+        {%- endif -%}
+      </a>
+
+      <div class="manifesto-header__actions">
+        <details class="manifesto-header__search">
+          <summary class="manifesto-header__action tap-target" aria-label="Pesquisar">
+            {% render 'icon', name: 'search' %}
+          </summary>
+          <div class="manifesto-header__search-panel">
+            <form action="{{ routes.search_url }}" method="get" role="search" class="manifesto-header__search-form">
+              <input
+                type="search"
+                name="q"
+                value="{{ search.terms | escape }}"
+                placeholder="O que você procura?"
+                aria-label="Pesquisar produtos"
+                class="field__input"
+              >
+              <button type="submit" class="manifesto-header__search-submit" aria-label="Enviar pesquisa">
+                {% render 'icon', name: 'search' %}
+              </button>
+            </form>
+          </div>
+        </details>
+
+        <a href="{{ routes.account_url }}" class="manifesto-header__action tap-target" aria-label="Minha conta">
+          {% render 'icon', name: 'account' %}
+        </a>
+
+        <a href="{{ routes.cart_url }}" class="manifesto-header__action manifesto-header__cart tap-target" aria-label="Carrinho">
+          {% render 'icon', name: 'cart' %}
+          {%- if cart.item_count > 0 -%}
+            <span class="manifesto-header__cart-count" data-cart-count>{{ cart.item_count }}</span>
+          {%- else -%}
+            <span class="manifesto-header__cart-count" data-cart-count hidden>0</span>
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
+
+    <div class="manifesto-header__mobile-nav" id="MobileNav-{{ section.id }}" hidden>
+      <ul class="manifesto-header__mobile-menu page-width" role="list">
         {%- for block in section.blocks -%}
-          <li {{ block.shopify_attributes }}>
-            <a
-              href="{{ block.settings.link | default: routes.root_url }}"
-              class="manifesto-header__menu-link"
-            >
+          <li>
+            <a href="{{ block.settings.link | default: routes.root_url }}" class="manifesto-header__mobile-link">
               {{ block.settings.label | escape }}
             </a>
           </li>
         {%- endfor -%}
       </ul>
-    </nav>
-
-    <a href="{{ routes.root_url }}" class="manifesto-header__logo-link" aria-label="{{ shop.name | escape }}">
-      {%- if settings.logo != blank -%}
-        {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-        {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-        {{
-          settings.logo
-          | image_url: width: 600
-          | image_tag:
-            class: 'manifesto-header__logo-image',
-            widths: '120, 180, 240, 360, 480, 600',
-            width: settings.logo_width,
-            height: logo_height,
-            alt: logo_alt,
-            sizes: '(max-width: 749px) 130px, 190px'
-        }}
-      {%- else -%}
-        <span class="manifesto-header__logo-text">{{ shop.name }}</span>
-      {%- endif -%}
-    </a>
-
-    <div class="manifesto-header__actions">
-      <details class="manifesto-header__search">
-        <summary class="manifesto-header__action tap-target" aria-label="Pesquisar">
-          {% render 'icon', name: 'search' %}
-        </summary>
-        <div class="manifesto-header__search-panel">
-          <form action="{{ routes.search_url }}" method="get" role="search" class="manifesto-header__search-form">
-            <input
-              type="search"
-              name="q"
-              value="{{ search.terms | escape }}"
-              placeholder="O que você procura?"
-              aria-label="Pesquisar produtos"
-              class="field__input"
-            >
-            <button type="submit" class="manifesto-header__search-submit" aria-label="Enviar pesquisa">
-              {% render 'icon', name: 'search' %}
-            </button>
-          </form>
-        </div>
-      </details>
-
-      <a href="{{ routes.account_url }}" class="manifesto-header__action tap-target" aria-label="Minha conta">
-        {% render 'icon', name: 'account' %}
-      </a>
-
-      <a href="{{ routes.cart_url }}" class="manifesto-header__action manifesto-header__cart tap-target" aria-label="Carrinho">
-        {% render 'icon', name: 'cart' %}
-        {%- if cart.item_count > 0 -%}
-          <span class="manifesto-header__cart-count" data-cart-count>{{ cart.item_count }}</span>
-        {%- else -%}
-          <span class="manifesto-header__cart-count" data-cart-count hidden>0</span>
-        {%- endif -%}
-      </a>
     </div>
-  </div>
-
-  <div class="manifesto-header__mobile-nav" id="MobileNav-{{ section.id }}" hidden>
-    <ul class="manifesto-header__mobile-menu page-width" role="list">
-      {%- for block in section.blocks -%}
-        <li>
-          <a href="{{ block.settings.link | default: routes.root_url }}" class="manifesto-header__mobile-link">
-            {{ block.settings.label | escape }}
-          </a>
-        </li>
-      {%- endfor -%}
-    </ul>
-  </div>
-</header>
+  </header>
+</div>
 
 <style>
-  .section-header {
-    position: relative;
-    z-index: 50;
+  .section-header { position: relative; z-index: 50; }
+
+  .manifesto-topbar {
+    width: 100%;
+    overflow: hidden;
+    color: #fff;
+    background: #000;
+    border-bottom: 1px solid #171717;
+  }
+
+  .manifesto-topbar__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: manifesto-topbar-{{ section.id }} 34s linear infinite;
+  }
+
+  .manifesto-topbar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 22px;
+    padding: 14px 28px;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .manifesto-topbar__dot { color: #7c7c7c; font-size: 12px; }
+
+  @keyframes manifesto-topbar-{{ section.id }} {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 
   .manifesto-header {
@@ -118,7 +176,6 @@
   }
 
   .manifesto-header__nav { justify-self: start; }
-
   .manifesto-header__menu {
     display: flex;
     align-items: center;
@@ -150,7 +207,6 @@
     background: #000;
     transition: width 0.2s ease;
   }
-
   .manifesto-header__menu-link:hover::after,
   .manifesto-header__menu-link:focus-visible::after { width: 100%; }
 
@@ -166,20 +222,10 @@
   .manifesto-header__logo-image {
     display: block;
     width: auto;
-    max-width: min(220px, 24vw);
+    max-width: min(260px, 28vw);
     height: auto;
-    max-height: 48px;
+    max-height: 64px;
     object-fit: contain;
-  }
-
-  .manifesto-header__logo-text {
-    color: #000;
-    font-size: clamp(20px, 2vw, 29px);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    white-space: nowrap;
   }
 
   .manifesto-header__actions {
@@ -188,7 +234,6 @@
     align-items: center;
     gap: 2px;
   }
-
   .manifesto-header__action {
     position: relative;
     color: #000;
@@ -197,7 +242,6 @@
     cursor: pointer;
     text-decoration: none;
   }
-
   .manifesto-header__action svg { width: 21px; height: 21px; }
 
   .manifesto-header__cart-count {
@@ -211,7 +255,6 @@
     padding: 0 4px;
     color: #fff;
     background: #000;
-    border: 1px solid #fff;
     border-radius: 999px;
     font-size: 10px;
     font-weight: 700;
@@ -221,137 +264,120 @@
   .manifesto-header__search { position: relative; }
   .manifesto-header__search summary { list-style: none; }
   .manifesto-header__search summary::-webkit-details-marker { display: none; }
-
   .manifesto-header__search-panel {
     position: absolute;
-    top: calc(100% + 13px);
+    top: calc(100% + 12px);
     right: 0;
-    width: min(420px, calc(100vw - 32px));
-    padding: 12px;
+    width: min(360px, 86vw);
+    padding: 14px;
     background: #fff;
-    border: 1px solid #dedede;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-    z-index: 20;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
   }
-
-  .manifesto-header__search-form {
-    display: grid;
-    grid-template-columns: 1fr 46px;
-    gap: 8px;
-  }
-
-  .manifesto-header__search-form .field__input {
-    border-radius: 0;
-    border-color: #cfcfcf;
-  }
-
+  .manifesto-header__search-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
   .manifesto-header__search-submit {
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
     color: #fff;
     background: #000;
     border: 1px solid #000;
+    cursor: pointer;
   }
-
-  .manifesto-header__search-submit svg { width: 20px; height: 20px; }
+  .manifesto-header__search-submit svg { width: 18px; height: 18px; }
 
   .manifesto-header__menu-toggle {
     display: none;
+    padding: 0;
     color: #000;
     background: transparent;
     border: 0;
+    cursor: pointer;
   }
-
   .manifesto-header__burger,
   .manifesto-header__burger::before,
   .manifesto-header__burger::after {
     display: block;
-    width: 23px;
-    height: 1.5px;
+    width: 18px;
+    height: 2px;
     background: currentColor;
-    transition: transform 0.2s ease, top 0.2s ease;
+    transition: transform 0.2s ease;
+    content: '';
   }
-
-  .manifesto-header__burger { position: relative; }
-  .manifesto-header__burger::before,
-  .manifesto-header__burger::after { content: ''; position: absolute; left: 0; }
-  .manifesto-header__burger::before { top: -7px; }
-  .manifesto-header__burger::after { top: 7px; }
+  .manifesto-header__burger::before { transform: translateY(-6px); }
+  .manifesto-header__burger::after { transform: translateY(4px); }
 
   .manifesto-header__mobile-nav {
+    border-top: 1px solid #efefef;
     background: #fff;
-    border-top: 1px solid #e9e9e9;
-    border-bottom: 1px solid #e9e9e9;
   }
-
   .manifesto-header__mobile-menu {
     margin: 0;
     padding-top: 10px;
-    padding-bottom: 18px;
+    padding-bottom: 14px;
     list-style: none;
   }
-
   .manifesto-header__mobile-link {
     display: block;
-    padding: 14px 0;
+    padding: 12px 0;
     color: #000;
-    border-bottom: 1px solid #ededed;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     text-decoration: none;
   }
 
-  @media screen and (max-width: 1100px) {
+  @media screen and (max-width: 1000px) {
     .manifesto-header__inner {
-      grid-template-columns: 1fr auto 1fr;
-      min-height: 70px;
-      gap: 8px;
+      grid-template-columns: auto 1fr auto;
+      min-height: 72px;
+      gap: 12px;
     }
-
+    .manifesto-header__menu-toggle { display: inline-flex; }
     .manifesto-header__nav { display: none; }
-    .manifesto-header__menu-toggle { display: inline-flex; justify-self: start; }
+    .manifesto-header__logo-link { justify-self: start; }
+    .manifesto-header__logo-image { max-width: 160px; max-height: 42px; }
     .manifesto-header__actions { gap: 0; }
-    .manifesto-header__logo-image { max-width: 145px; max-height: 38px; }
-    .manifesto-header__logo-text { font-size: 19px; letter-spacing: 0.1em; }
+    .manifesto-topbar__item { padding: 12px 20px; font-size: 9px; letter-spacing: 0.16em; }
   }
 
-  @media screen and (max-width: 480px) {
-    .manifesto-header__inner { padding-left: 12px; padding-right: 12px; }
-    .manifesto-header__action { min-width: 38px; min-height: 38px; }
-    .manifesto-header__actions .manifesto-header__search { display: none; }
-    .manifesto-header__logo-text { font-size: 16px; }
-  }
-
-  @media screen and (min-width: 1101px) {
-    .manifesto-header__mobile-nav { display: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .manifesto-topbar__track { animation-play-state: paused; }
   }
 </style>
 
 <script>
   (function () {
-    var section = document.querySelector('.manifesto-header[data-section-id="{{ section.id }}"]');
+    var section = document.querySelector('[data-section-id="{{ section.id }}"]');
     if (!section) return;
-
     var toggle = section.querySelector('.manifesto-header__menu-toggle');
-    var nav = document.getElementById('MobileNav-{{ section.id }}');
-
-    if (toggle && nav) {
-      toggle.addEventListener('click', function () {
-        var open = toggle.getAttribute('aria-expanded') === 'true';
-        toggle.setAttribute('aria-expanded', String(!open));
-        nav.hidden = open;
-      });
-    }
+    var mobileNav = section.querySelector('.manifesto-header__mobile-nav');
+    if (!toggle || !mobileNav) return;
+    toggle.addEventListener('click', function () {
+      var expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      mobileNav.hidden = expanded;
+    });
   })();
 </script>
 
 {% schema %}
 {
-  "name": "Cabeçalho Manifesto",
+  "name": "Navegação",
+  "tag": "section",
   "class": "section-header",
-  "max_blocks": 6,
+  "settings": [
+    { "type": "checkbox", "id": "show_top_bar", "label": "Mostrar faixa superior", "default": true },
+    {
+      "type": "textarea",
+      "id": "top_bar_text",
+      "label": "Itens da faixa superior",
+      "default": "5% OFF NO PIX|VISTA O QUE VOCÊ PENSA|FRETE GRÁTIS NAS CONDIÇÕES DA CAMPANHA|COMPRE 2 E LEVE 3"
+    }
+  ],
   "blocks": [
     {
       "type": "menu_item",
@@ -362,6 +388,7 @@
       ]
     }
   ],
-  "settings": []
+  "max_blocks": 8,
+  "presets": [{ "name": "Navegação" }]
 }
 {% endschema %}

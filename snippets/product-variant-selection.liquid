@@ -90,8 +90,12 @@
 
       // Swap the featured media to the one tied to this variant.
       if (gallery && variant.featured_media_id) {
-        var target = gallery.querySelector('[data-media-id="' + variant.featured_media_id + '"]');
-        if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+        if (typeof gallery.setActiveMedia === 'function') {
+          gallery.setActiveMedia(variant.featured_media_id);
+        } else {
+          var target = gallery.querySelector('[data-media-id="' + variant.featured_media_id + '"]');
+          if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+        }
       }
 
       // Keep the URL shareable.

@@ -7,24 +7,46 @@
       "blocks": {
         "inicio": {
           "type": "menu_item",
-          "settings": { "label": "Início", "link": "/" }
+          "settings": {
+            "label": "Início",
+            "link": "/"
+          }
         },
         "camisetas": {
           "type": "menu_item",
-          "settings": { "label": "Camisetas", "link": "/collections/all" }
+          "settings": {
+            "label": "Camisetas",
+            "link": "/collections/all"
+          }
         },
         "rastreio": {
           "type": "menu_item",
-          "settings": { "label": "Rastreie seu pedido", "link": "/pages/rastreie-seu-pedido" }
+          "settings": {
+            "label": "Rastreie seu pedido",
+            "link": "/pages/rastreie-seu-pedido"
+          }
         },
         "contato": {
           "type": "menu_item",
-          "settings": { "label": "Entre em contato", "link": "/pages/contato" }
+          "settings": {
+            "label": "Entre em contato",
+            "link": "/pages/contato"
+          }
         }
       },
-      "block_order": ["inicio", "camisetas", "rastreio", "contato"],
-      "settings": {}
+      "block_order": [
+        "inicio",
+        "camisetas",
+        "rastreio",
+        "contato"
+      ],
+      "settings": {
+        "show_top_bar": true,
+        "top_bar_text": "5% OFF NO PIX|VISTA O QUE VOCÊ PENSA|FRETE GRÁTIS NAS CONDIÇÕES DA CAMPANHA|COMPRE 2 E LEVE 3"
+      }
     }
   },
-  "order": ["nav"]
+  "order": [
+    "nav"
+  ]
 }
