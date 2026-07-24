@@ -4,29 +4,7 @@
       {%- case block.type -%}
         {%- when 'brand' -%}
           <div class="manifesto-footer__block manifesto-footer__brand" {{ block.shopify_attributes }}>
-            {%- if block.settings.logo != blank -%}
-              {{
-                block.settings.logo
-                | image_url: width: 500
-                | image_tag:
-                  class: 'manifesto-footer__logo',
-                  widths: '180, 300, 500',
-                  width: 220,
-                  alt: shop.name | escape
-              }}
-            {%- elsif settings.logo != blank -%}
-              {{
-                settings.logo
-                | image_url: width: 500
-                | image_tag:
-                  class: 'manifesto-footer__logo manifesto-footer__logo--theme',
-                  widths: '180, 300, 500',
-                  width: 220,
-                  alt: shop.name | escape
-              }}
-            {%- else -%}
-              <img src="{{ 'manifesto-logo.svg' | asset_url }}" alt="{{ shop.name | escape }}" class="manifesto-footer__logo" loading="lazy" width="260" height="70">
-            {%- endif -%}
+            <img src="{{ 'manifesto-logo.svg' | asset_url }}" alt="{{ shop.name | escape }}" class="manifesto-footer__logo" loading="lazy" width="260" height="88">
 
             {%- if block.settings.text != blank -%}
               <div class="manifesto-footer__text rte">{{ block.settings.text }}</div>
@@ -49,7 +27,11 @@
                 <li><a href="{{ routes.root_url }}" class="manifesto-footer__link">Início</a></li>
                 <li><a href="{{ routes.all_products_collection_url }}" class="manifesto-footer__link">Camisetas</a></li>
                 <li><a href="/pages/rastreie-seu-pedido" class="manifesto-footer__link">Rastreie seu pedido</a></li>
-                <li><a href="/pages/contato" class="manifesto-footer__link">Entre em contato</a></li>
+                {%- assign footer_contact_page = pages['contato'] -%}
+                {%- if footer_contact_page == blank -%}
+                  {%- assign footer_contact_page = pages['contact'] -%}
+                {%- endif -%}
+                <li><a href="{% if footer_contact_page != blank %}{{ footer_contact_page.url }}{% else %}{{ routes.root_url }}#contato{% endif %}" class="manifesto-footer__link">Entre em contato</a></li>
               </ul>
             {%- endif -%}
           </div>
@@ -101,7 +83,9 @@
     {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
       <ul class="manifesto-footer__payment" role="list" aria-label="Formas de pagamento">
         {%- for type in shop.enabled_payment_types -%}
-          <li>{{ type | payment_type_svg_tag: class: 'manifesto-footer__payment-icon' }}</li>
+          {%- unless type == 'paypal' -%}
+            <li>{{ type | payment_type_svg_tag: class: 'manifesto-footer__payment-icon' }}</li>
+          {%- endunless -%}
         {%- endfor -%}
       </ul>
     {%- endif -%}

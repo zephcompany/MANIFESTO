@@ -137,7 +137,7 @@
             {%- endunless -%}
           {%- when 'quantity' -%}
             <div class="product__quantity" {{ block.shopify_attributes }}>
-              <label class="field__label" for="Quantity-{{ section.id }}">{{ 'products.product.quantity.label' | t }}</label>
+              <label class="field__label" for="Quantity-{{ section.id }}">Quantidade</label>
               <div class="quantity-selector">
                 <button type="button" class="quantity__button" name="minus" aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}">&minus;</button>
                 <input class="quantity__input" type="number" name="quantity" id="Quantity-{{ section.id }}" min="1" value="1" aria-label="{{ 'products.product.quantity.input_label' | t: product: product.title | escape }}">
@@ -147,9 +147,11 @@
           {%- when 'buy_buttons' -%}
             <div class="product__buy-buttons" {{ block.shopify_attributes }}>
               <button type="submit" name="add" class="button product__add-to-cart" {% if current_variant.available == false %}disabled{% endif %}>
-                <span>{%- if current_variant.available -%}{{ 'products.product.add_to_cart' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}</span>
+                <span>{%- if current_variant.available -%}Adicionar ao carrinho{%- else -%}Esgotado{%- endif -%}</span>
               </button>
-              {%- if block.settings.show_dynamic_checkout -%}{{ form | payment_button }}{%- endif -%}
+              <button type="button" class="button button--secondary product__buy-now" data-buy-now {% if current_variant.available == false %}disabled{% endif %}>
+                Comprar agora
+              </button>
             </div>
           {%- when 'share' -%}
             <div class="product__share" {{ block.shopify_attributes }}>{% render 'share-button', share_link: product.url, share_title: product.title %}</div>
@@ -178,17 +180,8 @@
     { "type": "quantity", "name": "t:sections.main_product.blocks.quantity.name", "limit": 1 },
     {
       "type": "buy_buttons",
-      "name": "t:sections.main_product.blocks.buy_buttons.name",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "checkbox",
-          "id": "show_dynamic_checkout",
-          "default": true,
-          "label": "t:sections.main_product.blocks.buy_buttons.settings.show_dynamic_checkout.label",
-          "info": "t:sections.main_product.blocks.buy_buttons.settings.show_dynamic_checkout.info"
-        }
-      ]
+      "name": "Botões de compra",
+      "limit": 1
     },
     { "type": "description", "name": "t:sections.main_product.blocks.description.name", "limit": 1 },
     { "type": "share", "name": "t:sections.main_product.blocks.share.name", "limit": 1 },

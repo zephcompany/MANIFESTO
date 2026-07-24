@@ -1,3 +1,14 @@
+{%- liquid
+  assign manifesto_contact_page = pages['contato']
+  if manifesto_contact_page == blank
+    assign manifesto_contact_page = pages['contact']
+  endif
+  if manifesto_contact_page != blank
+    assign manifesto_contact_url = manifesto_contact_page.url
+  else
+    assign manifesto_contact_url = routes.root_url | append: '#contato'
+  endif
+-%}
 
 <div class="manifesto-header-wrapper" data-section-id="{{ section.id }}">
   {%- if section.settings.show_top_bar -%}
@@ -35,39 +46,28 @@
         <ul class="manifesto-header__menu" role="list">
           {%- for block in section.blocks -%}
             <li {{ block.shopify_attributes }}>
-              <a href="{{ block.settings.link | default: routes.root_url }}" class="manifesto-header__menu-link">
-                {{ block.settings.label | escape }}
-              </a>
+              {%- assign manifesto_label_downcase = block.settings.label | downcase -%}
+            {%- assign manifesto_item_url = block.settings.link | default: routes.root_url -%}
+            {%- if manifesto_label_downcase contains 'contato' -%}
+              {%- assign manifesto_item_url = manifesto_contact_url -%}
+            {%- endif -%}
+            <a href="{{ manifesto_item_url }}" class="manifesto-header__menu-link">
+              {{ block.settings.label | escape }}
+            </a>
             </li>
           {%- endfor -%}
         </ul>
       </nav>
 
       <a href="{{ routes.root_url }}" class="manifesto-header__logo-link" aria-label="{{ shop.name | escape }}">
-        {%- if settings.logo != blank -%}
-          {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-          {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-          {{
-            settings.logo
-            | image_url: width: 600
-            | image_tag:
-              class: 'manifesto-header__logo-image',
-              widths: '120, 180, 240, 360, 480, 600',
-              width: settings.logo_width,
-              height: logo_height,
-              alt: logo_alt,
-              sizes: '(max-width: 749px) 130px, 190px'
-          }}
-        {%- else -%}
-          <img
-            src="{{ 'manifesto-logo.svg' | asset_url }}"
-            alt="{{ shop.name | escape }}"
-            class="manifesto-header__logo-image"
-            loading="eager"
-            width="260"
-            height="70"
-          >
-        {%- endif -%}
+        <img
+          src="{{ 'manifesto-logo.svg' | asset_url }}"
+          alt="{{ shop.name | escape }}"
+          class="manifesto-header__logo-image"
+          loading="eager"
+          width="260"
+          height="88"
+        >
       </a>
 
       <div class="manifesto-header__actions">
@@ -111,7 +111,12 @@
       <ul class="manifesto-header__mobile-menu page-width" role="list">
         {%- for block in section.blocks -%}
           <li>
-            <a href="{{ block.settings.link | default: routes.root_url }}" class="manifesto-header__mobile-link">
+            {%- assign manifesto_label_downcase = block.settings.label | downcase -%}
+            {%- assign manifesto_item_url = block.settings.link | default: routes.root_url -%}
+            {%- if manifesto_label_downcase contains 'contato' -%}
+              {%- assign manifesto_item_url = manifesto_contact_url -%}
+            {%- endif -%}
+            <a href="{{ manifesto_item_url }}" class="manifesto-header__mobile-link">
               {{ block.settings.label | escape }}
             </a>
           </li>

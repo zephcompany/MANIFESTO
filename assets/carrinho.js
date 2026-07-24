@@ -24,6 +24,8 @@
   function updateCartCount(count) {
     document.querySelectorAll('[data-cart-count]').forEach(function (el) {
       el.textContent = count;
+      if (count > 0) el.removeAttribute('hidden');
+      else el.setAttribute('hidden', 'hidden');
     });
   }
 
@@ -57,7 +59,7 @@
         refreshCartCount();
         if (typeof window.mostrarAlerta === 'function') {
           window.mostrarAlerta(
-            (window.themeStrings && window.themeStrings.addedToCart) || 'Added to cart',
+            (window.themeStrings && window.themeStrings.addedToCart) || 'Produto adicionado ao carrinho',
             'positivo'
           );
         }

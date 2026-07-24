@@ -160,6 +160,12 @@
         "heading": "FAQ",
         "text": "Tudo o que você precisa saber antes de vestir sua próxima ideia."
       }
+    },
+    "contact": {
+      "type": "contact-form",
+      "settings": {
+        "heading": "Entre em contato"
+      }
     }
   },
   "order": [
@@ -169,6 +175,7 @@
     "featured",
     "social_proof",
     "marquee",
-    "faq"
+    "faq",
+    "contact"
   ]
 }

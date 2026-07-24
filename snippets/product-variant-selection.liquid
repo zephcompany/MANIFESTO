@@ -36,12 +36,13 @@
     var idInput = form.querySelector('.product-variant-id');
     var addButton = form.querySelector('.product__add-to-cart');
     var addButtonText = addButton ? addButton.querySelector('span') : null;
+    var buyNowButton = form.querySelector('[data-buy-now]');
     var priceContainer = section.querySelector('.product__price');
     var gallery = document.getElementById('ProductMedia-{{ section_id }}');
 
-    var ADD = '{{ 'products.product.add_to_cart' | t }}';
-    var SOLD_OUT = '{{ 'products.product.sold_out' | t }}';
-    var UNAVAILABLE = '{{ 'products.product.unavailable' | t }}';
+    var ADD = 'Adicionar ao carrinho';
+    var SOLD_OUT = 'Esgotado';
+    var UNAVAILABLE = 'Indisponível';
 
     function selectedOptions() {
       var opts = [];
@@ -62,6 +63,10 @@
       if (!addButton) return;
       if (disabled) { addButton.setAttribute('disabled', 'disabled'); }
       else { addButton.removeAttribute('disabled'); }
+      if (buyNowButton) {
+        if (disabled) buyNowButton.setAttribute('disabled', 'disabled');
+        else buyNowButton.removeAttribute('disabled');
+      }
       if (addButtonText && text) { addButtonText.textContent = text; }
     }
 
@@ -123,5 +128,27 @@
       if (plus) plus.addEventListener('click', function () { input.value = parseInt(input.value || '1', 10) + 1; });
       if (minus) minus.addEventListener('click', function () { input.value = Math.max(1, parseInt(input.value || '1', 10) - 1); });
     });
+
+    if (buyNowButton) {
+      buyNowButton.addEventListener('click', function () {
+        if (buyNowButton.disabled) return;
+        buyNowButton.setAttribute('aria-busy', 'true');
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Não foi possível adicionar o produto.');
+            window.location.href = '/checkout';
+          })
+          .catch(function () {
+            buyNowButton.removeAttribute('aria-busy');
+            if (typeof window.mostrarAlerta === 'function') {
+              window.mostrarAlerta('Não foi possível continuar. Tente novamente.', 'negativo');
+            }
+          });
+      });
+    }
   })();
 </script>
