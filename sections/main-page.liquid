@@ -20,6 +20,9 @@
   Conteúdo com max-width de 760px para boa legibilidade.
 {%- endcomment -%}
 
+{%- if page.handle == 'rastreie-seu-pedido' or page.handle == 'rastreio' -%}
+  {% render 'manifesto-tracking-content' %}
+{%- else -%}
 <section class="main-page page-width" data-section-id="{{ section.id }}">
   <header class="main-page__header">
     <h1 class="main-page__title">{{ page.title | escape }}</h1>
@@ -61,6 +64,8 @@
     }
   }
 </style>
+
+{%- endif -%}
 
 {% schema %}
 {

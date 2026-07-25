@@ -21,6 +21,10 @@
   No mobile a busca empilha (flex-direction: column).
 {%- endcomment -%}
 
+{%- assign manifesto_request_path = request.path | downcase -%}
+{%- if manifesto_request_path == '/pages/rastreie-seu-pedido' or manifesto_request_path == '/pages/rastreio' -%}
+  {% render 'manifesto-tracking-content' %}
+{%- else -%}
 <section class="notfound page-width" data-section-id="{{ section.id }}">
   <div class="notfound__inner">
     <p class="notfound__code" aria-hidden="true">404</p>
@@ -110,6 +114,8 @@
     }
   }
 </style>
+
+{%- endif -%}
 
 {% schema %}
 {
