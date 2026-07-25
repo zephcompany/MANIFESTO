@@ -26,8 +26,8 @@
   assign pix_price = current_price | times: pix_multiplier | divided_by: 100
 -%}
 
-<article class="manifesto-product-card">
-  <a href="{{ card_product.url }}" class="manifesto-product-card__media-link" aria-label="{{ card_product.title | escape }}">
+<article class="manifesto-product-card" data-manifesto-product-card>
+  <a href="{{ card_product.url }}" class="manifesto-product-card__media-link" data-card-product-link aria-label="{{ card_product.title | escape }}">
     <div class="manifesto-product-card__media" style="--card-ratio: {{ ratio }};">
       {%- if card_product.featured_media -%}
         {{
@@ -68,7 +68,7 @@
   </a>
 
   <div class="manifesto-product-card__content">
-    <a href="{{ card_product.url }}" class="manifesto-product-card__title-link">
+    <a href="{{ card_product.url }}" class="manifesto-product-card__title-link" data-card-product-link>
       <h3 class="manifesto-product-card__title">{{ card_product.title | escape }}</h3>
     </a>
 
@@ -91,9 +91,37 @@
       {%- assign option_name = option.name | downcase -%}
       {%- if option_name contains 'cor' or option_name contains 'color' -%}
         {%- assign color_option_found = true -%}
-        <div class="manifesto-product-card__swatches" aria-label="Cores disponíveis">
-          {%- for value in option.values limit: 6 -%}
-            {%- assign color_value = value | downcase | strip -%}
+        {%- assign color_option_index = option.position | minus: 1 -%}
+        <div class="manifesto-product-card__swatches" aria-label="Selecione uma cor">
+          {%- for value in option.values limit: 8 -%}
+            {%- liquid
+              assign color_variant = nil
+              for variant in card_product.variants
+                if variant.options[color_option_index] == value and variant.available
+                  assign color_variant = variant
+                  break
+                endif
+              endfor
+
+              if color_variant == nil
+                for variant in card_product.variants
+                  if variant.options[color_option_index] == value
+                    assign color_variant = variant
+                    break
+                  endif
+                endfor
+              endif
+
+              assign variant_image = color_variant.featured_media.preview_image | default: card_product.featured_media.preview_image
+              assign variant_image_url = variant_image | image_url: width: 900
+              assign variant_url = card_product.url | append: '?variant=' | append: color_variant.id
+              assign is_selected = false
+              if selected_variant.options[color_option_index] == value
+                assign is_selected = true
+              endif
+              assign color_value = value | downcase | strip
+            -%}
+
             {%- capture swatch_color -%}
               {%- case color_value -%}
                 {%- when 'preto' -%}#111111
@@ -121,11 +149,19 @@
                 {%- else -%}#d9d9d9
               {%- endcase -%}
             {%- endcapture -%}
-            <span
-              class="manifesto-product-card__swatch"
+
+            <button
+              type="button"
+              class="manifesto-product-card__swatch{% if is_selected %} is-selected{% endif %}{% unless color_variant.available %} is-unavailable{% endunless %}"
+              aria-label="Selecionar cor {{ value | escape }}"
+              aria-pressed="{% if is_selected %}true{% else %}false{% endif %}"
               title="{{ value | escape }}"
               style="--swatch: {{ swatch_color | strip }};"
-            ></span>
+              data-color-swatch
+              data-image-url="{{ variant_image_url }}"
+              data-variant-url="{{ variant_url }}"
+              data-available="{{ color_variant.available }}"
+            ></button>
           {%- endfor -%}
         </div>
       {%- endif -%}
@@ -138,9 +174,67 @@
     <a
       href="{{ card_product.url }}"
       class="manifesto-product-card__button {% unless card_product.available %}manifesto-product-card__button--disabled{% endunless %}"
+      data-card-buy-link
       {% unless card_product.available %}aria-disabled="true"{% endunless %}
     >
       {%- if card_product.available -%}COMPRAR{%- else -%}ESGOTADO{%- endif -%}
     </a>
   </div>
 </article>
+
+<script>
+  (function () {
+    var script = document.currentScript;
+    var card = script && script.previousElementSibling;
+    if (!card || !card.matches('[data-manifesto-product-card]')) return;
+
+    var swatches = card.querySelectorAll('[data-color-swatch]');
+    if (!swatches.length) return;
+
+    var primaryImage = card.querySelector('.manifesto-product-card__image--primary');
+    var secondaryImage = card.querySelector('.manifesto-product-card__image--secondary');
+    var productLinks = card.querySelectorAll('[data-card-product-link]');
+    var buyLink = card.querySelector('[data-card-buy-link]');
+
+    swatches.forEach(function (swatch) {
+      swatch.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        swatches.forEach(function (item) {
+          item.classList.remove('is-selected');
+          item.setAttribute('aria-pressed', 'false');
+        });
+        swatch.classList.add('is-selected');
+        swatch.setAttribute('aria-pressed', 'true');
+
+        var imageUrl = swatch.getAttribute('data-image-url');
+        if (imageUrl && primaryImage) {
+          primaryImage.removeAttribute('srcset');
+          primaryImage.removeAttribute('sizes');
+          primaryImage.src = imageUrl;
+          if (secondaryImage) {
+            secondaryImage.removeAttribute('srcset');
+            secondaryImage.removeAttribute('sizes');
+            secondaryImage.src = imageUrl;
+          }
+          card.classList.add('has-selected-color');
+        }
+
+        var variantUrl = swatch.getAttribute('data-variant-url');
+        if (variantUrl) {
+          productLinks.forEach(function (link) { link.href = variantUrl; });
+          if (buyLink) buyLink.href = variantUrl;
+        }
+
+        if (buyLink) {
+          var available = swatch.getAttribute('data-available') === 'true';
+          buyLink.textContent = available ? 'COMPRAR' : 'ESGOTADO';
+          buyLink.classList.toggle('manifesto-product-card__button--disabled', !available);
+          if (available) buyLink.removeAttribute('aria-disabled');
+          else buyLink.setAttribute('aria-disabled', 'true');
+        }
+      });
+    });
+  })();
+</script>

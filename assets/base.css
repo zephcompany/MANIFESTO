@@ -250,6 +250,8 @@ textarea.field__input { border-radius: 0; }
 .manifesto-product-card__image--secondary { opacity: 0; }
 .manifesto-product-card:hover .manifesto-product-card__image--primary { opacity: 0; transform: scale(1.025); }
 .manifesto-product-card:hover .manifesto-product-card__image--secondary { opacity: 1; transform: scale(1.025); }
+.manifesto-product-card.has-selected-color:hover .manifesto-product-card__image--primary { opacity: 1; }
+.manifesto-product-card.has-selected-color:hover .manifesto-product-card__image--secondary { opacity: 0; }
 .manifesto-product-card__badge {
   position: absolute;
   top: 14px;
@@ -301,7 +303,10 @@ textarea.field__input { border-radius: 0; }
 .manifesto-product-card__pix strong { color: #000; font-weight: 700; }
 .manifesto-product-card__pix span { padding: 3px 5px; color: #fff; background: #000; font-size: 8px; font-weight: 800; letter-spacing: 0.05em; }
 .manifesto-product-card__swatches { display: flex; align-items: center; gap: 7px; min-height: 28px; margin: 12px 0 14px; }
-.manifesto-product-card__swatch { display: block; width: 15px; height: 15px; background: var(--swatch, #ddd); border: 1px solid #c9c9c9; border-radius: 50%; box-shadow: inset 0 0 0 2px #fff; }
+.manifesto-product-card__swatch { display: block; width: 18px; height: 18px; padding: 0; background: var(--swatch, #ddd); border: 1px solid #bdbdbd; border-radius: 50%; box-shadow: inset 0 0 0 2px #fff; cursor: pointer; appearance: none; transition: outline-color .18s ease, transform .18s ease, opacity .18s ease; }
+.manifesto-product-card__swatch:hover { transform: scale(1.08); }
+.manifesto-product-card__swatch.is-selected { outline: 2px solid #000; outline-offset: 2px; }
+.manifesto-product-card__swatch.is-unavailable { opacity: .4; }
 .manifesto-product-card__button {
   display: grid;
   place-items: center;
