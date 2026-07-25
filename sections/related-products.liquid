@@ -1,7 +1,7 @@
 
 {%- if section.settings.enable -%}
   <product-recommendations
-    class="manifesto-related page-width"
+    class="manifesto-related"
     data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
   >
     {%- liquid
@@ -42,12 +42,13 @@
   </product-recommendations>
 
   <style>
+    .manifesto-related { padding-inline: clamp(16px, 3.2vw, 34px); }
     .manifesto-featured--related {
       padding: clamp(40px, 5vw, 72px) 0 clamp(70px, 8vw, 110px);
       border-top: 1px solid #ececec;
       margin-top: clamp(34px, 5vw, 58px);
     }
-    .manifesto-featured__inner { width: 100%; }
+    .manifesto-featured__inner { width: 100%; max-width: 1440px; margin: 0 auto; }
     .manifesto-featured__eyebrow {
       margin: 0 0 10px;
       color: #666;

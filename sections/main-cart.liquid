@@ -7,9 +7,7 @@
       <p class="manifesto-cart__subtitle">Revise seus itens antes de finalizar a compra.</p>
     </div>
     {%- if cart.item_count > 0 -%}
-      <div class="manifesto-cart__meta">
-        <span class="manifesto-cart__count">{{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}itens{% endif %}</span>
-      </div>
+      <span class="manifesto-cart__count">{{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}itens{% endif %}</span>
     {%- endif -%}
   </div>
 
@@ -23,51 +21,45 @@
     {%- form 'cart', cart, class: 'manifesto-cart__form' -%}
       <div class="manifesto-cart__layout">
         <div class="manifesto-cart__items-wrap">
-          <div class="manifesto-cart__labels" aria-hidden="true">
-            <span>Produto</span>
-            <span>Quantidade</span>
-            <span>Total</span>
-          </div>
-
-          <div class="manifesto-cart__items">
+          <div class="manifesto-cart__items-grid">
             {%- for item in cart.items -%}
-              <article class="manifesto-cart-item" data-line="{{ forloop.index }}">
-                <a href="{{ item.url }}" class="manifesto-cart-item__media">
+              <article class="manifesto-cart-card" data-line="{{ forloop.index }}">
+                <a href="{{ item.url }}" class="manifesto-cart-card__media">
                   {%- if item.image -%}
                     {{
                       item.image
-                      | image_url: width: 420
+                      | image_url: width: 520
                       | image_tag:
                         loading: 'lazy',
-                        widths: '120, 240, 360, 420',
-                        sizes: '(max-width: 749px) 94px, 150px',
-                        class: 'manifesto-cart-item__image',
+                        widths: '180, 260, 360, 520',
+                        sizes: '(max-width: 749px) 50vw, (max-width: 1200px) 28vw, 20vw',
+                        class: 'manifesto-cart-card__image',
                         alt: item.image.alt | default: item.product.title | escape
                     }}
                   {%- endif -%}
                 </a>
 
-                <div class="manifesto-cart-item__content">
-                  <div class="manifesto-cart-item__details">
-                    <a href="{{ item.url }}" class="manifesto-cart-item__title">{{ item.product.title | escape }}</a>
-                    {%- unless item.product.has_only_default_variant -%}
-                      <div class="manifesto-cart-item__options">
-                        {%- for option in item.options_with_values -%}
-                          <span>{{ option.name | escape }}: {{ option.value | escape }}</span>
-                        {%- endfor -%}
-                      </div>
-                    {%- endunless -%}
-                    <div class="manifesto-cart-item__prices">
-                      <span class="manifesto-cart-item__unit">{{ item.final_price | money }} cada</span>
-                      {%- if item.original_line_price > item.final_line_price -%}
-                        <span class="manifesto-cart-item__discount">Economia de {{ item.original_line_price | minus: item.final_line_price | money }}</span>
-                      {%- endif -%}
-                    </div>
-                    <a href="{{ item.url_to_remove }}" class="manifesto-cart-item__remove">Remover</a>
-                  </div>
+                <div class="manifesto-cart-card__body">
+                  <a href="{{ item.url }}" class="manifesto-cart-card__title">{{ item.product.title | escape }}</a>
 
-                  <div class="manifesto-cart-item__purchase">
-                    <div class="manifesto-cart-item__quantity">
+                  {%- unless item.product.has_only_default_variant -%}
+                    <div class="manifesto-cart-card__options">
+                      {%- for option in item.options_with_values -%}
+                        <span>{{ option.name | escape }}: {{ option.value | escape }}</span>
+                      {%- endfor -%}
+                    </div>
+                  {%- endunless -%}
+
+                  <div class="manifesto-cart-card__price-line">
+                    {%- if item.original_line_price > item.final_line_price -%}
+                      <s>{{ item.original_line_price | money }}</s>
+                    {%- endif -%}
+                    <strong>{{ item.final_line_price | money }}</strong>
+                  </div>
+                  <p class="manifesto-cart-card__unit">{{ item.final_price | money }} cada</p>
+
+                  <div class="manifesto-cart-card__footer">
+                    <div class="manifesto-cart-card__quantity">
                       <label class="visually-hidden" for="Quantity-{{ forloop.index }}">Quantidade de {{ item.product.title | escape }}</label>
                       <div class="quantity-selector">
                         <button type="button" class="quantity__button" name="minus" aria-label="Diminuir quantidade">−</button>
@@ -86,12 +78,7 @@
                       </div>
                     </div>
 
-                    <div class="manifesto-cart-item__total-wrap">
-                      {%- if item.original_line_price > item.final_line_price -%}
-                        <s class="manifesto-cart-item__compare">{{ item.original_line_price | money }}</s>
-                      {%- endif -%}
-                      <strong class="manifesto-cart-item__total">{{ item.final_line_price | money }}</strong>
-                    </div>
+                    <a href="{{ item.url_to_remove }}" class="manifesto-cart-card__remove">Remover</a>
                   </div>
                 </div>
               </article>
@@ -158,104 +145,46 @@
   .manifesto-cart__title { margin: 0; font-size: clamp(38px, 6vw, 68px); line-height: .92; letter-spacing: -.04em; text-transform: uppercase; }
   .manifesto-cart__subtitle { margin: 12px 0 0; color: #666; font-size: 14px; }
   .manifesto-cart__count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0 16px;
-    color: #000;
-    background: #f5f5f5;
-    border: 1px solid #e5e5e5;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px;
+    color: #000; background: #f5f5f5; border: 1px solid #e5e5e5; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
   }
   .manifesto-cart__empty { max-width: 580px; margin: 70px auto 0; text-align: center; }
   .manifesto-cart__empty h2 { margin: 0 0 12px; font-size: clamp(28px, 4vw, 44px); text-transform: uppercase; }
   .manifesto-cart__empty p { margin: 0 0 26px; color: #666; }
-  .manifesto-cart__layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(320px, .75fr); gap: clamp(28px, 4vw, 48px); padding-top: 32px; }
-  .manifesto-cart__labels {
+  .manifesto-cart__layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(320px, .72fr); gap: clamp(24px, 4vw, 42px); padding-top: 32px; }
+  .manifesto-cart__items-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 160px 110px;
-    gap: 20px;
-    padding: 0 0 12px;
-    color: #777;
-    border-bottom: 1px solid #ececec;
-    font-size: 11px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
   }
-  .manifesto-cart__labels span:nth-child(2),
-  .manifesto-cart__labels span:nth-child(3) { text-align: right; }
-  .manifesto-cart-item {
-    display: grid;
-    grid-template-columns: 150px minmax(0, 1fr);
-    gap: 22px;
-    padding: 26px 0;
-    border-bottom: 1px solid #ececec;
-  }
-  .manifesto-cart-item__media { display: block; overflow: hidden; background: #f3f3f3; }
-  .manifesto-cart-item__image { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
-  .manifesto-cart-item__content {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 20px;
-    align-items: center;
-  }
-  .manifesto-cart-item__title {
-    display: inline-block;
-    color: #000;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.35;
-    text-decoration: none;
-    text-transform: uppercase;
-  }
-  .manifesto-cart-item__options { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 9px; color: #666; font-size: 12px; }
-  .manifesto-cart-item__prices { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 10px; }
-  .manifesto-cart-item__unit { color: #666; font-size: 12px; }
-  .manifesto-cart-item__discount { color: #000; font-size: 12px; font-weight: 700; }
-  .manifesto-cart-item__remove { display: inline-block; margin-top: 14px; color: #000; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-decoration: underline; text-transform: uppercase; }
-  .manifesto-cart-item__purchase {
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 24px;
-    align-items: center;
-  }
-  .manifesto-cart-item__quantity { justify-self: end; }
-  .manifesto-cart-item .quantity-selector { display: inline-flex; align-items: center; overflow: hidden; border: 1px solid #d7d7d7; }
-  .manifesto-cart-item .quantity__button {
-    width: 42px;
-    height: 44px;
-    color: #000;
+  .manifesto-cart-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     background: #fff;
-    border: 0;
-    cursor: pointer;
-    font-size: 22px;
+    border: 1px solid #e6e6e6;
   }
-  .manifesto-cart-item .quantity__input {
-    width: 56px;
-    height: 44px;
-    color: #000;
-    background: #fff;
-    border: 0;
-    text-align: center;
-    font-size: 14px;
-    -moz-appearance: textfield;
+  .manifesto-cart-card__media { display: block; background: #f4f4f4; }
+  .manifesto-cart-card__image { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .manifesto-cart-card__body { display: flex; flex: 1; flex-direction: column; padding: 16px; }
+  .manifesto-cart-card__title {
+    color: #000; font-size: 14px; font-weight: 700; line-height: 1.35; text-decoration: none; text-transform: uppercase;
   }
-  .manifesto-cart-item .quantity__input::-webkit-outer-spin-button,
-  .manifesto-cart-item .quantity__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .manifesto-cart-item__total-wrap { min-width: 100px; text-align: right; }
-  .manifesto-cart-item__compare { display: block; color: #8a8a8a; font-size: 12px; }
-  .manifesto-cart-item__total { display: block; font-size: 20px; line-height: 1.1; }
+  .manifesto-cart-card__options { display: grid; gap: 4px; margin-top: 8px; color: #666; font-size: 11px; }
+  .manifesto-cart-card__price-line { display: flex; align-items: baseline; gap: 8px; margin-top: 10px; }
+  .manifesto-cart-card__price-line s { color: #8a8a8a; font-size: 12px; }
+  .manifesto-cart-card__price-line strong { font-size: 20px; line-height: 1; }
+  .manifesto-cart-card__unit { margin: 6px 0 0; color: #666; font-size: 11px; }
+  .manifesto-cart-card__footer { display: grid; gap: 12px; margin-top: auto; padding-top: 16px; }
+  .manifesto-cart-card .quantity-selector { display: inline-flex; align-items: center; overflow: hidden; border: 1px solid #d7d7d7; }
+  .manifesto-cart-card .quantity__button { width: 38px; height: 40px; color: #000; background: #fff; border: 0; cursor: pointer; font-size: 20px; }
+  .manifesto-cart-card .quantity__input { width: 46px; height: 40px; color: #000; background: #fff; border: 0; text-align: center; font-size: 14px; -moz-appearance: textfield; }
+  .manifesto-cart-card .quantity__input::-webkit-outer-spin-button,
+  .manifesto-cart-card .quantity__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .manifesto-cart-card__remove { color: #000; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; text-decoration: underline; }
   .manifesto-cart__summary {
-    position: sticky;
-    top: 22px;
-    align-self: start;
-    padding: 28px;
-    background: linear-gradient(180deg, #f9f9f9 0%, #f2f2f2 100%);
-    border: 1px solid #e7e7e7;
+    position: sticky; top: 22px; align-self: start; padding: 28px;
+    background: linear-gradient(180deg, #f9f9f9 0%, #f2f2f2 100%); border: 1px solid #e7e7e7;
   }
   .manifesto-cart__summary-head { margin-bottom: 18px; }
   .manifesto-cart__summary-eyebrow { margin: 0 0 8px; color: #6a6a6a; font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
@@ -271,29 +200,22 @@
   .manifesto-cart__checkout, .manifesto-cart__update { width: 100%; min-height: 54px; }
   .manifesto-cart__update { margin-top: 10px; }
   .manifesto-cart__continue { display: block; margin-top: 16px; color: #000; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-align: center; text-transform: uppercase; text-decoration: none; }
-  .manifesto-cart__trust {
-    display: grid;
-    gap: 10px;
-    margin-top: 22px;
-    padding-top: 20px;
-    border-top: 1px solid #dcdcdc;
-    color: #555;
-    font-size: 13px;
-  }
+  .manifesto-cart__trust { display: grid; gap: 10px; margin-top: 22px; padding-top: 20px; border-top: 1px solid #dcdcdc; color: #555; font-size: 13px; }
   .manifesto-cart__trust span::before { content: '✓'; margin-right: 8px; color: #000; }
 
+  @media screen and (min-width: 1500px) {
+    .manifesto-cart__items-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media screen and (max-width: 1200px) {
+    .manifesto-cart__items-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
   @media screen and (max-width: 1050px) {
     .manifesto-cart__layout { grid-template-columns: 1fr; }
     .manifesto-cart__summary { position: static; }
   }
   @media screen and (max-width: 749px) {
     .manifesto-cart__header { align-items: flex-start; flex-direction: column; }
-    .manifesto-cart__labels { display: none; }
-    .manifesto-cart-item { grid-template-columns: 94px minmax(0, 1fr); gap: 14px; padding: 20px 0; }
-    .manifesto-cart-item__content { grid-template-columns: 1fr; gap: 14px; }
-    .manifesto-cart-item__title { font-size: 14px; }
-    .manifesto-cart-item__purchase { grid-template-columns: 1fr; gap: 12px; }
-    .manifesto-cart-item__quantity, .manifesto-cart-item__total-wrap { justify-self: start; text-align: left; }
+    .manifesto-cart__items-grid { grid-template-columns: 1fr; }
     .manifesto-cart__summary { padding: 22px 18px; }
     .manifesto-cart__summary h2 { font-size: 24px; }
     .manifesto-cart__line strong { font-size: 22px; }
@@ -304,19 +226,16 @@
   (function () {
     var container = document.getElementById('main-cart-{{ section.id }}');
     if (!container) return;
-
     container.querySelectorAll('.quantity-selector').forEach(function (selector) {
       var input = selector.querySelector('.quantity__input');
       var minus = selector.querySelector('[name="minus"]');
       var plus = selector.querySelector('[name="plus"]');
       if (!input) return;
-
       function update(delta) {
         var current = parseInt(input.value || '0', 10);
         var next = Math.max(0, current + delta);
         input.value = next;
       }
-
       if (minus) minus.addEventListener('click', function () { update(-1); });
       if (plus) plus.addEventListener('click', function () { update(1); });
     });
