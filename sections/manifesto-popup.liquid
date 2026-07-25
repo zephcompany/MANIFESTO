@@ -156,8 +156,11 @@
     }
 
     if (storageGet(submittedKey) !== '1' && storageGet(closedKey) !== '1') {
-      popup.hidden = false;
-      popup.removeAttribute('aria-hidden');
+      window.setTimeout(function () {
+        if (storageGet(submittedKey) === '1' || storageGet(closedKey) === '1') return;
+        popup.hidden = false;
+        popup.removeAttribute('aria-hidden');
+      }, 10000);
     }
 
     if (phoneInput) {
