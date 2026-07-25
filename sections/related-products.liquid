@@ -1,47 +1,97 @@
-{%- comment -%}
-  ============================================================
-  RELATED PRODUCTS — produtos relacionados (recomendações)
-  ============================================================
 
-  O QUE FAZ:
-  Exibe produtos relacionados usando a API de recomendações do Shopify.
-  Um web component (<product-recommendations>) busca via fetch os
-  produtos sugeridos e injeta o grid no DOM (lazy, sem lib externa).
-
-  ONDE É USADA:
-  Template product (abaixo da página do produto).
-
-  PRINCIPAIS PARTES:
-  - data-url monta a requisição com section_id, product_id e limit
-  - customElements 'product-recommendations': faz o fetch e injeta o HTML
-  - render 'card-product': card de cada produto recomendado
-  - Settings: enable, heading, products_to_show
-
-  OBSERVAÇÕES:
-  Só renderiza se enable estiver marcado. O grid só aparece quando
-  recommendations.performed e há produtos retornados.
-{%- endcomment -%}
 {%- if section.settings.enable -%}
   <product-recommendations
-    class="related-products page-width"
+    class="manifesto-related page-width"
     data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
   >
-    {%- if recommendations.performed and recommendations.products_count > 0 -%}
-      <h2 class="related-products__title">{{ section.settings.heading | escape }}</h2>
-      <ul class="product-grid" role="list">
-        {%- for product in recommendations.products -%}
-          <li>{% render 'card-product', card_product: product %}</li>
-        {%- endfor -%}
-      </ul>
+    {%- liquid
+      assign related_products = recommendations.products
+      if recommendations.performed and recommendations.products_count == 0
+        assign fallback_collection = product.collections.first
+        if fallback_collection and fallback_collection.products_count > 1
+          assign related_products = fallback_collection.products
+        endif
+      endif
+    -%}
+
+    {%- if recommendations.performed -%}
+      {%- assign rendered_count = 0 -%}
+      <section class="manifesto-featured manifesto-featured--related">
+        <div class="manifesto-featured__inner" style="--grid-columns: {{ section.settings.columns_desktop }};">
+          <header class="manifesto-featured__header">
+            <div>
+              <p class="manifesto-featured__eyebrow">DESCUBRA MAIS</p>
+              <h2 class="manifesto-featured__heading">{{ section.settings.heading | escape }}</h2>
+              {%- if section.settings.text != blank -%}
+                <p class="manifesto-featured__subheading">{{ section.settings.text | escape }}</p>
+              {%- endif -%}
+            </div>
+          </header>
+
+          <ul class="manifesto-product-grid" role="list">
+            {%- for related_product in related_products -%}
+              {%- if related_product.id != product.id and rendered_count < section.settings.products_to_show -%}
+                <li>{% render 'card-product', card_product: related_product %}</li>
+                {%- assign rendered_count = rendered_count | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </section>
     {%- endif -%}
   </product-recommendations>
+
+  <style>
+    .manifesto-featured--related {
+      padding: clamp(40px, 5vw, 72px) 0 clamp(70px, 8vw, 110px);
+      border-top: 1px solid #ececec;
+      margin-top: clamp(34px, 5vw, 58px);
+    }
+    .manifesto-featured__inner { width: 100%; }
+    .manifesto-featured__eyebrow {
+      margin: 0 0 10px;
+      color: #666;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .manifesto-featured__header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: clamp(26px, 4vw, 44px);
+    }
+    .manifesto-featured__heading {
+      margin: 0 0 8px;
+      color: #000;
+      font-size: clamp(28px, 4vw, 50px);
+      font-weight: 800;
+      line-height: .95;
+      letter-spacing: -.035em;
+      text-transform: uppercase;
+    }
+    .manifesto-featured__subheading { margin: 0; color: #666; font-size: 14px; line-height: 1.5; }
+    .manifesto-product-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--grid-columns, 4), minmax(0, 1fr));
+      gap: clamp(20px, 2.2vw, 36px);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    @media screen and (max-width: 1000px) {
+      .manifesto-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    }
+  </style>
 
   <script>
     if (!customElements.get('product-recommendations')) {
       customElements.define('product-recommendations', class extends HTMLElement {
         connectedCallback() {
           var el = this;
-          if (el.querySelector('.product-grid')) return;
+          if (el.querySelector('.manifesto-product-grid')) return;
           fetch(el.dataset.url)
             .then(function (r) { return r.text(); })
             .then(function (text) {
@@ -59,31 +109,15 @@
 
 {% schema %}
 {
-  "name": "t:sections.related_products.name",
+  "name": "Produtos relacionados",
   "tag": "section",
   "class": "section-related-products",
   "settings": [
-    {
-      "type": "checkbox",
-      "id": "enable",
-      "default": true,
-      "label": "t:sections.related_products.settings.enable.label"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "default": "You may also like",
-      "label": "t:sections.related_products.settings.heading.label"
-    },
-    {
-      "type": "range",
-      "id": "products_to_show",
-      "min": 2,
-      "max": 10,
-      "step": 1,
-      "default": 4,
-      "label": "t:sections.related_products.settings.products_to_show.label"
-    }
+    { "type": "checkbox", "id": "enable", "default": true, "label": "Ativar seção" },
+    { "type": "text", "id": "heading", "default": "Veja mais opções", "label": "Título" },
+    { "type": "textarea", "id": "text", "default": "Mais frases e modelos para você continuar explorando.", "label": "Texto" },
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 10, "step": 1, "default": 4, "label": "Produtos para mostrar" },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "default": 4, "label": "Colunas no desktop" }
   ]
 }
 {% endschema %}
