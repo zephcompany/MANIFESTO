@@ -1,3 +1,4 @@
+{%- assign popup_form_id = 'ManifestoPopupForm-' | append: section.id -%}
 
 <section class="manifesto-popup" data-section-id="{{ section.id }}" hidden>
   <div class="manifesto-popup__card">
@@ -6,11 +7,30 @@
     <h2 class="manifesto-popup__title">{{ section.settings.heading | escape }}</h2>
     <p class="manifesto-popup__text">{{ section.settings.text | escape }}</p>
 
-    <form class="manifesto-popup__form" action="{{ section.settings.group_link | default: routes.root_url }}" method="get">
-      <label class="visually-hidden" for="PopupField-{{ section.id }}">E-mail ou WhatsApp</label>
-      <input id="PopupField-{{ section.id }}" type="text" class="field__input" placeholder="{{ section.settings.placeholder | escape }}">
-      <button type="submit" class="button manifesto-popup__button">{{ section.settings.button_label | escape }}</button>
-    </form>
+    {%- form 'contact', id: popup_form_id, class: 'manifesto-popup__form' -%}
+      <input type="hidden" name="contact[email]" value="clube@{{ request.host | escape }}">
+      <input type="hidden" name="contact[origem]" value="Popup Clube Manifesto">
+
+      <label class="visually-hidden" for="PopupPhone-{{ section.id }}">WhatsApp</label>
+      <input
+        id="PopupPhone-{{ section.id }}"
+        type="tel"
+        name="contact[WhatsApp]"
+        class="field__input manifesto-popup__phone"
+        placeholder="{{ section.settings.placeholder | default: '(00) 00000-0000' | escape }}"
+        inputmode="numeric"
+        autocomplete="tel"
+        maxlength="15"
+        aria-describedby="PopupMessage-{{ section.id }}"
+        required
+      >
+
+      <p class="manifesto-popup__message" id="PopupMessage-{{ section.id }}" role="status" aria-live="polite"></p>
+
+      <button type="submit" class="button manifesto-popup__button">
+        <span>{{ section.settings.button_label | escape }}</span>
+      </button>
+    {%- endform -%}
   </div>
 </section>
 
@@ -66,7 +86,19 @@
     line-height: 1.55;
   }
   .manifesto-popup__form { display: grid; gap: 10px; }
+  .manifesto-popup__phone { font-variant-numeric: tabular-nums; }
+  .manifesto-popup__message {
+    min-height: 18px;
+    margin: -2px 0 0;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .manifesto-popup__message.is-error { color: #b42318; }
+  .manifesto-popup__message.is-success { color: #166534; }
   .manifesto-popup__button { width: 100%; }
+  .manifesto-popup__button[disabled] { cursor: wait; opacity: 0.65; }
+
   @media screen and (max-width: 749px) {
     .manifesto-popup { right: 14px; bottom: 14px; width: calc(100vw - 28px); }
     .manifesto-popup__card { padding: 24px 18px 18px; }
@@ -77,17 +109,123 @@
   (function () {
     var popup = document.querySelector('.manifesto-popup[data-section-id="{{ section.id }}"]');
     if (!popup) return;
-    var key = 'manifesto-popup-closed';
-    if (!window.localStorage || localStorage.getItem(key) !== '1') {
-      popup.hidden = false;
-    }
+
+    var form = popup.querySelector('.manifesto-popup__form');
+    var phoneInput = popup.querySelector('.manifesto-popup__phone');
+    var message = popup.querySelector('.manifesto-popup__message');
+    var submitButton = popup.querySelector('.manifesto-popup__button');
+    var submitText = submitButton ? submitButton.querySelector('span') : null;
     var closeBtn = popup.querySelector('.manifesto-popup__close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        popup.hidden = true;
-        try { localStorage.setItem(key, '1'); } catch (e) {}
+    var groupLink = {{ section.settings.group_link | json }};
+    var closedKey = 'manifesto-popup-closed';
+    var submittedKey = 'manifesto-popup-submitted';
+
+    function storageGet(key) {
+      try { return window.localStorage ? localStorage.getItem(key) : null; } catch (e) { return null; }
+    }
+
+    function storageSet(key, value) {
+      try { if (window.localStorage) localStorage.setItem(key, value); } catch (e) {}
+    }
+
+    function digitsOnly(value) {
+      return String(value || '').replace(/\D/g, '').slice(0, 11);
+    }
+
+    function formatBrazilPhone(value) {
+      var digits = digitsOnly(value);
+      if (!digits) return '';
+      if (digits.length <= 2) return '(' + digits;
+      if (digits.length <= 6) return '(' + digits.slice(0, 2) + ') ' + digits.slice(2);
+      if (digits.length <= 10) {
+        return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 6) + '-' + digits.slice(6);
+      }
+      return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 7) + '-' + digits.slice(7);
+    }
+
+    function showMessage(text, type) {
+      if (!message) return;
+      message.textContent = text || '';
+      message.classList.toggle('is-error', type === 'error');
+      message.classList.toggle('is-success', type === 'success');
+    }
+
+    function hidePopup() {
+      popup.hidden = true;
+      popup.setAttribute('aria-hidden', 'true');
+    }
+
+    if (storageGet(submittedKey) !== '1' && storageGet(closedKey) !== '1') {
+      popup.hidden = false;
+      popup.removeAttribute('aria-hidden');
+    }
+
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function () {
+        phoneInput.value = formatBrazilPhone(phoneInput.value);
+        showMessage('', '');
+      });
+
+      phoneInput.addEventListener('paste', function () {
+        window.setTimeout(function () {
+          phoneInput.value = formatBrazilPhone(phoneInput.value);
+        }, 0);
       });
     }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        storageSet(closedKey, '1');
+        hidePopup();
+      });
+    }
+
+    if (!form) return;
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var digits = digitsOnly(phoneInput ? phoneInput.value : '');
+      if (digits.length < 10 || digits.length > 11) {
+        showMessage('Digite um WhatsApp válido com DDD.', 'error');
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+
+      var formattedPhone = formatBrazilPhone(digits);
+      if (phoneInput) phoneInput.value = formattedPhone;
+
+      var originalButtonText = submitText ? submitText.textContent : '';
+      if (submitButton) submitButton.disabled = true;
+      if (submitText) submitText.textContent = 'ENVIANDO...';
+      showMessage('Salvando seu WhatsApp...', '');
+
+      var formData = new FormData(form);
+      formData.set('contact[WhatsApp]', formattedPhone);
+      formData.set('contact[telefone_sem_mascara]', digits);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'text/html' },
+        credentials: 'same-origin'
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Falha ao enviar');
+          storageSet(submittedKey, '1');
+          showMessage('Pronto! Seu número foi cadastrado.', 'success');
+
+          window.setTimeout(function () {
+            hidePopup();
+            if (groupLink) window.location.href = groupLink;
+          }, 650);
+        })
+        .catch(function () {
+          showMessage('Não conseguimos enviar agora. Tente novamente.', 'error');
+          if (submitButton) submitButton.disabled = false;
+          if (submitText) submitText.textContent = originalButtonText;
+        });
+    });
   })();
 </script>
 
@@ -99,9 +237,9 @@
     { "type": "text", "id": "eyebrow", "label": "Texto pequeno", "default": "Clube Manifesto" },
     { "type": "text", "id": "heading", "label": "Título", "default": "10% OFF NA PRIMEIRA COMPRA" },
     { "type": "textarea", "id": "text", "label": "Descrição", "default": "Entre no grupo VIP e receba o cupom + lançamentos e ofertas antes de todo mundo." },
-    { "type": "text", "id": "placeholder", "label": "Placeholder", "default": "E-mail ou WhatsApp" },
+    { "type": "text", "id": "placeholder", "label": "Placeholder", "default": "(00) 00000-0000" },
     { "type": "text", "id": "button_label", "label": "Texto do botão", "default": "Quero meu desconto" },
-    { "type": "url", "id": "group_link", "label": "Link do grupo" }
+    { "type": "url", "id": "group_link", "label": "Link do grupo após o cadastro" }
   ],
   "presets": [{ "name": "Popup Clube Manifesto" }]
 }

@@ -19,9 +19,15 @@
         alt: section.settings.image.alt | default: section.settings.link_label | escape
     }}
   {%- else -%}
-    <div class="manifesto-hero__placeholder manifesto-hero__image--desktop">
-      <span>ADICIONE O BANNER PRINCIPAL</span>
-    </div>
+    <img
+      src="{{ 'manifesto-hero-banner.png' | asset_url }}"
+      alt="Banner principal Manifesto"
+      class="manifesto-hero__image manifesto-hero__image--desktop"
+      loading="eager"
+      fetchpriority="high"
+      width="1920"
+      height="800"
+    >
   {%- endif -%}
 
   {%- if section.settings.mobile_image != blank -%}
@@ -45,57 +51,48 @@
   .manifesto-hero {
     position: relative;
     width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
     overflow: hidden;
-    background: #f3f3f3;
+    background: #000;
   }
 
-  .manifesto-hero--adapt { min-height: 0; }
-  .manifesto-hero--small { height: clamp(330px, 43vw, 620px); }
-  .manifesto-hero--medium { height: clamp(440px, 55vw, 780px); }
-  .manifesto-hero--large { height: clamp(540px, 68vw, 920px); }
+  .manifesto-hero--adapt,
+  .manifesto-hero--small,
+  .manifesto-hero--medium,
+  .manifesto-hero--large {
+    height: auto !important;
+    min-height: 0 !important;
+  }
 
-  .manifesto-hero__link { display: block; width: 100%; height: 100%; }
+  .manifesto-hero__link {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
 
   .manifesto-hero__image {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    height: auto !important;
+    object-fit: contain;
     object-position: center;
-  }
-
-  .manifesto-hero--adapt .manifesto-hero__image {
-    height: auto;
-    aspect-ratio: auto;
   }
 
   .manifesto-hero__image--mobile { display: none; }
 
-  .manifesto-hero__placeholder {
-    display: grid;
-    place-items: center;
-    width: 100%;
-    height: 100%;
-    min-height: 520px;
-    color: #7a7a7a;
-    background:
-      linear-gradient(135deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%) -20px 0/40px 40px,
-      linear-gradient(225deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%) -20px 0/40px 40px,
-      linear-gradient(315deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%) 0 0/40px 40px,
-      linear-gradient(45deg, rgba(0, 0, 0, 0.04) 25%, #f5f5f5 25%) 0 0/40px 40px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-  }
-
   @media screen and (max-width: 749px) {
-    .manifesto-hero--small,
-    .manifesto-hero--medium,
-    .manifesto-hero--large { height: min(132vw, 760px); }
+    .manifesto-hero__image--mobile {
+      display: block;
+      width: 100%;
+      height: auto !important;
+      object-fit: contain;
+    }
 
-    .manifesto-hero__image--mobile { display: block; }
-    .manifesto-hero--has-mobile .manifesto-hero__image--desktop { display: none; }
-    .manifesto-hero__placeholder { min-height: 520px; }
+    .manifesto-hero--has-mobile .manifesto-hero__image--desktop {
+      display: none;
+    }
   }
 </style>
 

@@ -1,26 +1,9 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "hero": {
       "type": "image-banner",
-      "custom_css": [
-        ".manifesto-hero {height: auto !important; min-height: 0 !important;}",
-        ".manifesto-hero__link {height: auto !important;}",
-        ".manifesto-hero__image {width: 100%; height: auto !important; object-fit: contain !important;}"
-      ],
       "settings": {
-        "image": "shopify://shop_images/ChatGPT_Image_25_de_jul._de_2026_12_43_17.png",
-        "mobile_image": "shopify://shop_images/ChatGPT_Image_25_de_jul._de_2026_13_02_00.png",
         "height": "medium",
-        "link": "",
         "link_label": "Ver coleção"
       }
     },
@@ -31,8 +14,7 @@
         "heading": "10% OFF NA PRIMEIRA COMPRA",
         "text": "Entre no grupo VIP e receba o cupom + lançamentos e ofertas antes de todo mundo.",
         "placeholder": "E-mail ou WhatsApp",
-        "button_label": "Quero meu desconto",
-        "group_link": ""
+        "button_label": "Quero meu desconto"
       }
     },
     "benefits": {
@@ -77,9 +59,6 @@
         "exchange",
         "shipping"
       ],
-      "custom_css": [
-        "@media screen and (max-width: 749px) {.manifesto-benefits {display: none !important; }}"
-      ],
       "settings": {}
     },
     "featured": {
@@ -101,7 +80,6 @@
         "video_1": {
           "type": "testimonial",
           "settings": {
-            "video_url": "",
             "name": "Cliente 01",
             "rating": "5"
           }
@@ -109,7 +87,6 @@
         "video_2": {
           "type": "testimonial",
           "settings": {
-            "video_url": "",
             "name": "Cliente 02",
             "rating": "4.5"
           }
