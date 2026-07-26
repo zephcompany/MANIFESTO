@@ -8,34 +8,36 @@
   <div class="product__media-wrapper">
     {%- if product.media.size > 0 -%}
       <div class="product__gallery" id="ProductMedia-{{ section.id }}">
-        <button type="button" class="product__gallery-nav product__gallery-nav--prev" aria-label="Imagem anterior">‹</button>
-        <div class="product__media-list" data-product-track>
-          {%- for media in product.media -%}
-            <div class="product__media-item{% if forloop.first %} is-active{% endif %}" data-media-id="{{ media.id }}" data-media-index="{{ forloop.index0 }}">
-              {%- case media.media_type -%}
-                {%- when 'image' -%}
-                  {{
-                    media
-                    | image_url: width: 1920
-                    | image_tag:
-                      loading: 'lazy',
-                      sizes: '(min-width: 1000px) 55vw, 100vw',
-                      widths: '360, 540, 720, 900, 1080, 1440, 1920',
-                      alt: media.alt | default: product.title | escape
-                  }}
-                {%- when 'external_video' -%}
-                  {{ media | external_video_tag }}
-                {%- when 'video' -%}
-                  {{ media | video_tag: controls: true, image_size: '1920x' }}
-                {%- when 'model' -%}
-                  {{ media | model_viewer_tag }}
-                {%- else -%}
-                  {{ media | media_tag }}
-              {%- endcase -%}
-            </div>
-          {%- endfor -%}
+        <div class="product__gallery-stage">
+          <button type="button" class="product__gallery-nav product__gallery-nav--prev" aria-label="Imagem anterior">‹</button>
+          <div class="product__media-list" data-product-track>
+            {%- for media in product.media -%}
+              <div class="product__media-item{% if forloop.first %} is-active{% endif %}" data-media-id="{{ media.id }}" data-media-index="{{ forloop.index0 }}">
+                {%- case media.media_type -%}
+                  {%- when 'image' -%}
+                    {{
+                      media
+                      | image_url: width: 1920
+                      | image_tag:
+                        loading: 'lazy',
+                        sizes: '(min-width: 1000px) 55vw, 100vw',
+                        widths: '360, 540, 720, 900, 1080, 1440, 1920',
+                        alt: media.alt | default: product.title | escape
+                    }}
+                  {%- when 'external_video' -%}
+                    {{ media | external_video_tag }}
+                  {%- when 'video' -%}
+                    {{ media | video_tag: controls: true, image_size: '1920x' }}
+                  {%- when 'model' -%}
+                    {{ media | model_viewer_tag }}
+                  {%- else -%}
+                    {{ media | media_tag }}
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
+          </div>
+          <button type="button" class="product__gallery-nav product__gallery-nav--next" aria-label="Próxima imagem">›</button>
         </div>
-        <button type="button" class="product__gallery-nav product__gallery-nav--next" aria-label="Próxima imagem">›</button>
 
         {%- if product.media.size > 1 -%}
           <div class="product__thumbs" aria-label="Miniaturas do produto">

@@ -1,21 +1,11 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "hero": {
       "type": "image-banner",
       "settings": {
-        "mobile_image": "shopify://shop_images/ChatGPT_Image_25_de_jul._de_2026_13_02_00.png",
         "height": "medium",
-        "link": "",
-        "link_label": "Ver coleção"
+        "link_label": "Ver coleção",
+        "use_manifesto_banners": true
       }
     },
     "popup": {
@@ -25,53 +15,8 @@
         "heading": "10% OFF NA PRIMEIRA COMPRA",
         "text": "Entre no grupo VIP e receba o cupom + lançamentos e ofertas antes de todo mundo.",
         "placeholder": "E-mail ou WhatsApp",
-        "button_label": "Quero meu desconto",
-        "group_link": ""
+        "button_label": "Quero meu desconto"
       }
-    },
-    "benefits": {
-      "type": "manifesto-benefits",
-      "blocks": {
-        "premium": {
-          "type": "benefit",
-          "settings": {
-            "icon": "cotton",
-            "title": "Algodão premium",
-            "text": "Malha encorpada, toque macio e caimento que dura."
-          }
-        },
-        "secure": {
-          "type": "benefit",
-          "settings": {
-            "icon": "shield",
-            "title": "Compra segura",
-            "text": "Ambiente protegido e pagamento criptografado."
-          }
-        },
-        "exchange": {
-          "type": "benefit",
-          "settings": {
-            "icon": "exchange",
-            "title": "Troca facilitada",
-            "text": "Não amou? A gente resolve rápido, sem estresse."
-          }
-        },
-        "shipping": {
-          "type": "benefit",
-          "settings": {
-            "icon": "truck",
-            "title": "Envio para todo o Brasil",
-            "text": "Despachamos rápido, com código de rastreio."
-          }
-        }
-      },
-      "block_order": [
-        "premium",
-        "secure",
-        "exchange",
-        "shipping"
-      ],
-      "settings": {}
     },
     "featured": {
       "type": "featured-collection",
@@ -92,7 +37,6 @@
         "video_1": {
           "type": "testimonial",
           "settings": {
-            "video_url": "",
             "name": "Cliente 01",
             "rating": "5"
           }
@@ -100,7 +44,6 @@
         "video_2": {
           "type": "testimonial",
           "settings": {
-            "video_url": "",
             "name": "Cliente 02",
             "rating": "4.5"
           }
@@ -185,7 +128,6 @@
   "order": [
     "hero",
     "popup",
-    "benefits",
     "featured",
     "social_proof",
     "marquee",
