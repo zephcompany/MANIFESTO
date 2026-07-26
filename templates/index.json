@@ -71,6 +71,9 @@
         "exchange",
         "shipping"
       ],
+      "custom_css": [
+        "@media screen and (max-width: 749px) {& {display: none !important; }}"
+      ],
       "settings": {}
     },
     "featured": {
