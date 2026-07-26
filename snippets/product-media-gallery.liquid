@@ -8,7 +8,7 @@
     padding-top: var(--spacing-sections);
     padding-bottom: var(--spacing-sections);
   }
-  .product__gallery { position: relative; }
+  .product__gallery { position: relative; display: flex; flex-direction: column; gap: 12px; }
   .product__media-wrapper { width: 100%; min-width: 0; }
   .product__media-list {
     display: grid;
@@ -135,6 +135,50 @@
     .section-main-product .product { grid-template-columns: 1fr; gap: 24px; }
     .product__gallery-nav { width: 40px; height: 40px; font-size: 24px; }
   }
+
+  @media screen and (max-width: 749px) {
+    .section-main-product .product {
+      padding-top: clamp(18px, 5vw, 28px);
+      gap: 18px;
+    }
+    .product__gallery { gap: 10px; }
+    .product__thumbs {
+      order: -1;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      margin-top: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 2px;
+    }
+    .product__thumbs::-webkit-scrollbar { display: none; }
+    .product__thumb {
+      flex: 0 0 56px;
+      width: 56px;
+      min-width: 56px;
+      border-width: 1px;
+    }
+    .product__thumb.is-active { border-width: 2px; }
+    .product__thumb img {
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+    .product__media-list {
+      width: 100%;
+      order: 1;
+    }
+    .product__gallery-nav {
+      top: calc(50% + 20px);
+      width: 42px;
+      height: 42px;
+      font-size: 24px;
+      background: rgba(255,255,255,.94);
+    }
+    .product__gallery-nav--prev { left: 10px; }
+    .product__gallery-nav--next { right: 10px; }
+  }
 </style>
 
 <script>
@@ -155,7 +199,13 @@
       if (index >= slides.length) index = 0;
       currentIndex = index;
       slides.forEach(function (slide, i) { slide.classList.toggle('is-active', i === index); });
-      thumbs.forEach(function (thumb, i) { thumb.classList.toggle('is-active', i === index); });
+      thumbs.forEach(function (thumb, i) {
+        var isActive = i === index;
+        thumb.classList.toggle('is-active', isActive);
+        if (isActive) {
+          try { thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } catch (e) {}
+        }
+      });
       if (shouldScroll !== false) {
         track.scrollTo({ left: track.clientWidth * index, behavior: 'smooth' });
       }
@@ -177,7 +227,13 @@
       if (index !== currentIndex && index >= 0 && index < slides.length) {
         currentIndex = index;
         slides.forEach(function (slide, i) { slide.classList.toggle('is-active', i === index); });
-        thumbs.forEach(function (thumb, i) { thumb.classList.toggle('is-active', i === index); });
+        thumbs.forEach(function (thumb, i) {
+          var isActive = i === index;
+          thumb.classList.toggle('is-active', isActive);
+          if (isActive) {
+            try { thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } catch (e) {}
+          }
+        });
       }
     }, { passive: true });
 
